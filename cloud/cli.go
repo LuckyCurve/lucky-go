@@ -2,7 +2,6 @@ package cloud
 
 import (
 	"errors"
-	"fmt"
 	"lucky-go/config"
 
 	"github.com/spf13/cobra"
@@ -35,22 +34,6 @@ var sshCmd = &cobra.Command{
 	},
 }
 
-func newCommand() *cobra.Command {
-	var port int
-	cmd := &cobra.Command{
-		Use:   "serve",
-		Short: "Run the HTTP server",
-		RunE: func(cmd *cobra.Command, args []string) error {
-			fmt.Printf("Serving on :%d\n", port)
-			return nil
-		},
-	}
-	cmd.Flags().IntVar(&port, "port", 8080, "port to listen on")
-	return cmd
-}
-
 func NewCommand() *cobra.Command {
-	sshCmd.AddCommand(newCommand())
-
 	return sshCmd
 }

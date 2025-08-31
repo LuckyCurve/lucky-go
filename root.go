@@ -2,6 +2,7 @@ package main
 
 import (
 	"lucky-go/cloud"
+	"lucky-go/game"
 	"lucky-go/ssh"
 	"os"
 
@@ -45,4 +46,5 @@ func init() {
 
 	rootCmd.AddCommand(ssh.NewCommand())
 	rootCmd.AddCommand(cloud.NewCommand())
+	rootCmd.AddCommand(game.NewCommand())
 }
