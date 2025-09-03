@@ -18,8 +18,13 @@ var sshCmd = &cobra.Command{
 	Short: "start agme hang out",
 	RunE: func(cmd *cobra.Command, args []string) error {
 
+		device, err := chooseDevice()
+		if err != nil {
+			return err
+		}
+
 		for {
-			err := executeCLick()
+			err := executeCLick(device)
 			if err != nil {
 				return err
 			}
@@ -51,7 +56,7 @@ func chooseDevice() (string, error) {
 	}
 
 	if len(devices) == 0 {
-		return "", fmt.Errorf("devices not found!")
+		return "", fmt.Errorf("devices not found")
 	} else if len(devices) == 1 {
 		return devices[0], nil
 	} else {
@@ -76,11 +81,7 @@ func chooseDevice() (string, error) {
 	}
 }
 
-func executeCLick() error {
-	device, err := chooseDevice()
-	if err != nil {
-		return err
-	}
+func executeCLick(device string) error {
 
 	cmd := exec.Command("adb", "-s", device, "shell", "input", "tap", "1800", "900")
 	out, err := cmd.CombinedOutput()
