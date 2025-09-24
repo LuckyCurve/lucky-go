@@ -4,7 +4,7 @@ import (
 	"lucky-go/cloud"
 	"lucky-go/finance"
 	"lucky-go/game"
-	"lucky-go/ssh"
+	"lucky-go/server/ssh"
 	"os"
 
 	"github.com/spf13/cobra"
