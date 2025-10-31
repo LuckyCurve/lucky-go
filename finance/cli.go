@@ -17,30 +17,55 @@ var peCmd = &cobra.Command{
 	Short: "Calculate finance PE ratios based on treasury and AAA company yields",
 	Long:  `Calculate price-to-earnings ratios using current 10-year treasury and AAA corporate bond yields as benchmarks.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		earningRate, err := get10YearTreasuryYield()
-		if err != nil {
-			return err
+		// 使用通道接收结果和错误
+		type result struct {
+			value float64
+			err   error
+		}
+		
+		treasuryCh := make(chan result, 1)
+		aaaCh := make(chan result, 1)
+
+		// 并行获取 10 年期国债收益率
+		go func() {
+			value, err := get10YearTreasuryYield()
+			treasuryCh <- result{value: value, err: err}
+		}()
+
+		// 并行获取 AAA 公司债券收益率
+		go func() {
+			value, err := getAAACompanyYield()
+			aaaCh <- result{value: value, err: err}
+		}()
+
+		// 等待两个请求完成
+		treasuryResult := <-treasuryCh
+		if treasuryResult.err != nil {
+			return treasuryResult.err
 		}
 
-		fmt.Printf("10 years treasury earning rate: %v\n", earningRate)
-		fmt.Printf("50%% : %.2f\n", 50/earningRate)
-		fmt.Printf("75%% : %.2f\n", 75/earningRate)
-		fmt.Printf("100%% : %.2f\n", 100/earningRate)
-		fmt.Printf("125%% : %.2f\n", 125/earningRate)
-		fmt.Printf("150%% : %.2f\n", 150/earningRate)
+		aaaResult := <-aaaCh
+		if aaaResult.err != nil {
+			return aaaResult.err
+		}
+
+		// 输出 10 年期国债收益率相关计算
+		fmt.Printf("10 years treasury earning rate: %v\n", treasuryResult.value)
+		fmt.Printf("50%% : %.2f\n", 50/treasuryResult.value)
+		fmt.Printf("75%% : %.2f\n", 75/treasuryResult.value)
+		fmt.Printf("100%% : %.2f\n", 100/treasuryResult.value)
+		fmt.Printf("125%% : %.2f\n", 125/treasuryResult.value)
+		fmt.Printf("150%% : %.2f\n", 150/treasuryResult.value)
 
 		fmt.Print("\n======================\n\n")
-		earningRate, err = getAAACompanyYield()
-		if err != nil {
-			return err
-		}
 
-		fmt.Printf("aaa company rate: %v\n", earningRate)
-		fmt.Printf("50%% : %.2f\n", 50/earningRate)
-		fmt.Printf("75%% : %.2f\n", 75/earningRate)
-		fmt.Printf("100%% : %.2f\n", 100/earningRate)
-		fmt.Printf("125%% : %.2f\n", 125/earningRate)
-		fmt.Printf("150%% : %.2f\n", 150/earningRate)
+		// 输出 AAA 公司债券收益率相关计算
+		fmt.Printf("aaa company rate: %v\n", aaaResult.value)
+		fmt.Printf("50%% : %.2f\n", 50/aaaResult.value)
+		fmt.Printf("75%% : %.2f\n", 75/aaaResult.value)
+		fmt.Printf("100%% : %.2f\n", 100/aaaResult.value)
+		fmt.Printf("125%% : %.2f\n", 125/aaaResult.value)
+		fmt.Printf("150%% : %.2f\n", 150/aaaResult.value)
 
 		return nil
 	},
