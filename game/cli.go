@@ -1,3 +1,4 @@
+// Package game provides utilities for game automation.
 package game
 
 import (
@@ -12,10 +13,11 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// sshCmd represents the ssh command
-var sshCmd = &cobra.Command{
+// gameCmd represents the game automation command
+var gameCmd = &cobra.Command{
 	Use:   "game",
-	Short: "start agme hang out",
+	Short: "Start game automation",
+	Long:  `Start automated clicking for game hang out.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 
 		device, err := chooseDevice()
@@ -34,6 +36,8 @@ var sshCmd = &cobra.Command{
 	},
 }
 
+// chooseDevice prompts the user to select an Android device from the list of connected devices.
+// It returns the selected device ID or an error if no devices are found or user input is invalid.
 func chooseDevice() (string, error) {
 	cmd := exec.Command("adb", "devices")
 	out, err := cmd.Output()
@@ -81,6 +85,8 @@ func chooseDevice() (string, error) {
 	}
 }
 
+// executeCLick executes an ADB tap command on the specified device at coordinates (1800, 900).
+// This is used for game automation to perform tap actions.
 func executeCLick(device string) error {
 
 	cmd := exec.Command("adb", "-s", device, "shell", "input", "tap", "1800", "900")
@@ -95,6 +101,7 @@ func executeCLick(device string) error {
 	return nil
 }
 
+// NewCommand creates and returns the game automation command for the game module.
 func NewCommand() *cobra.Command {
-	return sshCmd
+	return gameCmd
 }

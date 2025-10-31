@@ -7,10 +7,11 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// sshCmd represents the ssh command
-var sshCmd = &cobra.Command{
+// rebootCmd represents the reboot command
+var rebootCmd = &cobra.Command{
 	Use:   "reboot [destination]",
-	Short: "reboot destination machine",
+	Short: "Reboot destination machine",
+	Long:  `Reboot a cloud instance specified by the destination name.`,
 	Args:  cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		destination := args[0]
@@ -34,6 +35,7 @@ var sshCmd = &cobra.Command{
 	},
 }
 
+// NewCommand creates and returns the reboot command for the cloud module.
 func NewCommand() *cobra.Command {
-	return sshCmd
+	return rebootCmd
 }

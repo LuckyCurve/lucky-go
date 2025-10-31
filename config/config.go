@@ -1,3 +1,5 @@
+// Package config handles configuration loading and saving for the lucky-go application.
+// It provides functionality for loading destination instances and saving configuration data.
 package config
 
 import (
@@ -11,18 +13,24 @@ import (
 const CONFIG_DIR = ".lucky-go"
 const CONFIG_FILE = "config.yaml"
 
-type (
-	Config struct {
-		Dest map[string]DestinationInstance `yaml:"dest"`
-	}
+// Config represents the main configuration structure for the application.
+type Config struct {
+	// Dest maps destination names to destination instances
+	Dest map[string]DestinationInstance `yaml:"dest"`
+}
 
-	DestinationInstance struct {
-		Ssh        string `yaml:"ssh"`
-		Region     string `yaml:"region"`
-		InstanceId string `yaml:"instance-id"`
-	}
-)
+// DestinationInstance represents a cloud instance with SSH connection details.
+type DestinationInstance struct {
+	// Ssh contains the SSH connection string
+	Ssh string `yaml:"ssh"`
+	// Region specifies the cloud region
+	Region string `yaml:"region"`
+	// InstanceId is the unique identifier for the instance
+	InstanceId string `yaml:"instance-id"`
+}
 
+// SaveConfig saves the configuration to the config file.
+// It marshals the config struct to YAML format and writes it to the config file.
 func (config Config) SaveConfig() error {
 	bytes, err := yaml.Marshal(config)
 	if err != nil {
@@ -37,6 +45,8 @@ func (config Config) SaveConfig() error {
 	return os.WriteFile(path, bytes, 0644)
 }
 
+// LoadDestinationInstance loads a destination instance from the configuration by name.
+// It returns the destination instance and any error encountered while loading the config.
 func LoadDestinationInstance(dest string) (*DestinationInstance, error) {
 	config, err := loadConfig()
 	if err != nil {
@@ -51,6 +61,8 @@ func LoadDestinationInstance(dest string) (*DestinationInstance, error) {
 	return &res, nil
 }
 
+// loadConfig loads the configuration from the config file.
+// It reads the YAML file and unmarshals it into a Config struct.
 func loadConfig() (*Config, error) {
 	path, err := getConfigFilePath()
 	if err != nil {
@@ -72,6 +84,8 @@ func loadConfig() (*Config, error) {
 	return &config, nil
 }
 
+// getConfigFilePath returns the path to the config file, creating directories if needed.
+// It ensures the config directory and file exist, creating them if they don't.
 func getConfigFilePath() (string, error) {
 	homeDir, _ := os.UserHomeDir()
 	configDir := filepath.Join(homeDir, CONFIG_DIR)

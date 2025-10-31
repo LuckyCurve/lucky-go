@@ -13,20 +13,16 @@ import (
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "lucky-go",
-	Short: "A brief description of your application",
-	Long: `A longer description that spans multiple lines and likely contains
-examples and usage of using your application. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "A CLI tool for various utilities including cloud, finance, game and server operations",
+	Long: `lucky-go is a CLI application that provides utilities for interacting with cloud services, 
+analyzing financial data, managing game automation, and server operations.`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	// Run: func(cmd *cobra.Command, args []string) { },
 }
 
-// Execute adds all child commands to the root command and sets flags appropriately.
-// This is called by main.main(). It only needs to happen once to the rootCmd.
+// Execute executes the root command and handles any errors by exiting with status 1.
+// This function is called by main.main() and only needs to be executed once.
 func Execute() {
 	err := rootCmd.Execute()
 	if err != nil {

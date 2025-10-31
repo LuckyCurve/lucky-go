@@ -7,6 +7,8 @@ import (
 	"time"
 )
 
+// TestXxx tests the network latency to a remote server.
+// It measures the time required to establish a TCP connection to duckduckgo.com:80.
 func TestXxx(t *testing.T) {
 	// 可以直接用域名
 	dst := "duckduckgo.com:80" // HTTP 端口

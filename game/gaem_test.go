@@ -7,6 +7,8 @@ import (
 	"testing"
 )
 
+// TestXxx tests the functionality to list connected Android devices via ADB.
+// It executes the 'adb devices' command and prints the list of connected devices.
 func TestXxx(t *testing.T) {
 	// 执行 adb devices
 	cmd := exec.Command("adb", "devices")

@@ -1,3 +1,4 @@
+// Package ssh provides SSH connection utilities for the lucky-go application.
 package ssh
 
 import (
@@ -13,8 +14,8 @@ import (
 // sshCmd represents the ssh command
 var sshCmd = &cobra.Command{
 	Use:   "ssh [destination]",
-	Short: "build ssh connection with destination",
-	Long:  `Connect to a remote server via SSH.\n\nYou must provide a destination in the format user@host.`,
+	Short: "Build SSH connection with destination",
+	Long:  `Connect to a remote server via SSH using a destination name specified in the config.`,
 	Args:  cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		destination := args[0]
@@ -45,11 +46,14 @@ var sshCmd = &cobra.Command{
 	},
 }
 
+// newCommand creates a subcommand for the ssh command that runs an HTTP server.
+// It allows specifying a port to listen on with the --port flag.
 func newCommand() *cobra.Command {
 	var port int
 	cmd := &cobra.Command{
 		Use:   "serve",
 		Short: "Run the HTTP server",
+		Long:  `Run an HTTP server on the specified port.`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			fmt.Printf("Serving on :%d\n", port)
 			return nil
@@ -59,6 +63,7 @@ func newCommand() *cobra.Command {
 	return cmd
 }
 
+// NewCommand creates and returns the SSH command with its subcommands for the server module.
 func NewCommand() *cobra.Command {
 	sshCmd.AddCommand(newCommand())
 

@@ -1,3 +1,4 @@
+// Package finance provides financial calculations and data retrieval functionality.
 package finance
 
 import (
@@ -10,10 +11,11 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// sshCmd represents the ssh command
-var sshCmd = &cobra.Command{
+// peCmd represents the price-to-earnings ratio calculation command
+var peCmd = &cobra.Command{
 	Use:   "pe",
-	Short: "calculate finance pe",
+	Short: "Calculate finance PE ratios based on treasury and AAA company yields",
+	Long:  `Calculate price-to-earnings ratios using current 10-year treasury and AAA corporate bond yields as benchmarks.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		earningRate, err := get10YearTreasuryYield()
 		if err != nil {
@@ -44,6 +46,8 @@ var sshCmd = &cobra.Command{
 	},
 }
 
+// get10YearTreasuryYield retrieves the current 10-year treasury yield from macromicro.me.
+// It returns the yield value as a float64 and any error encountered during the process.
 func get10YearTreasuryYield() (float64, error) {
 	// 构造请求
 	req, err := http.NewRequest("GET", "https://sc.macromicro.me/series/354/10year-bond-yield", nil)
@@ -79,6 +83,8 @@ func get10YearTreasuryYield() (float64, error) {
 	return val, nil
 }
 
+// getAAACompanyYield retrieves the current AAA corporate bond yield from macromicro.me.
+// It returns the yield value as a float64 and any error encountered during the process.
 func getAAACompanyYield() (float64, error) {
 	// 构造请求
 	req, err := http.NewRequest("GET", "https://sc.macromicro.me/series/618/moodys-aaa", nil)
@@ -114,6 +120,7 @@ func getAAACompanyYield() (float64, error) {
 	return val, nil
 }
 
+// NewCommand creates and returns the PE calculation command for the finance module.
 func NewCommand() *cobra.Command {
-	return sshCmd
+	return peCmd
 }
