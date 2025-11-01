@@ -6,8 +6,9 @@ import (
 	"path/filepath"
 	"testing"
 
-	"gopkg.in/yaml.v3"
 	"lucky-go/config"
+
+	"gopkg.in/yaml.v3"
 )
 
 func TestRebootCommand(t *testing.T) {

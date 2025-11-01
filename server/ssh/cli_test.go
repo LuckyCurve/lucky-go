@@ -5,8 +5,9 @@ import (
 	"os/exec"
 	"testing"
 
-	"gopkg.in/yaml.v3"
 	"lucky-go/config"
+
+	"gopkg.in/yaml.v3"
 )
 
 // 保存原始函数以便测试后恢复
