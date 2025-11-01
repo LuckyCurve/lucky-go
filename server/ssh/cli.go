@@ -11,6 +11,9 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// 为测试目的定义一个可替换的执行命令函数
+var execCommand = exec.Command
+
 // sshCmd represents the ssh command
 var sshCmd = &cobra.Command{
 	Use:   "ssh [destination]",
@@ -18,6 +21,10 @@ var sshCmd = &cobra.Command{
 	Long:  `Connect to a remote server via SSH using a destination name specified in the config.`,
 	Args:  cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
+		if len(args) < 1 {
+			return errors.New("destination must exists")
+		}
+		
 		destination := args[0]
 
 		if destination == "" {
@@ -32,7 +39,7 @@ var sshCmd = &cobra.Command{
 		ssh := destinationInstance.Ssh
 
 		fmt.Printf("get dest ssh %v\n", ssh)
-		sshProcess := exec.Command("ssh", ssh)
+		sshProcess := execCommand("ssh", ssh)
 		sshProcess.Stdin = os.Stdin
 		sshProcess.Stdout = os.Stdout
 		sshProcess.Stderr = os.Stderr

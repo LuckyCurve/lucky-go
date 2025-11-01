@@ -71,56 +71,37 @@ var peCmd = &cobra.Command{
 	},
 }
 
+// HTTPClient 定义了一个HTTP客户端接口，用于模拟HTTP请求
+type HTTPClient interface {
+	Do(req *http.Request) (*http.Response, error)
+}
+
+// 默认HTTP客户端
+var defaultHTTPClient HTTPClient = &http.Client{}
+
 // get10YearTreasuryYield retrieves the current 10-year treasury yield from macromicro.me.
 // It returns the yield value as a float64 and any error encountered during the process.
 func get10YearTreasuryYield() (float64, error) {
-	// 构造请求
-	req, err := http.NewRequest("GET", "https://sc.macromicro.me/series/354/10year-bond-yield", nil)
-	if err != nil {
-		return 0, err
-	}
-	// 模拟 Chrome 浏览器 UA
-	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
-
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		return 0, err
-	}
-	defer resp.Body.Close()
-
-	// 解析 HTML
-	doc, err := goquery.NewDocumentFromReader(resp.Body)
-	if err != nil {
-		return 0, err
-	}
-
-	// 用 CSS selector 抓取
-	selection := doc.Find("#panel > main > div.mm-chart-collection > div.mm-cc-hd > div > div.mm-cc-chart-stats-title.pb-2.d-flex.flex-wrap.align-items-baseline > div.stat-val > span.val").First()
-	text := strings.TrimSpace(selection.Text())
-
-	// 转 float
-	val, err := strconv.ParseFloat(text, 64)
-	if err != nil {
-		return 0, err
-	}
-
-	return val, nil
+	return getTreasuryYield("https://sc.macromicro.me/series/354/10year-bond-yield", "#panel > main > div.mm-chart-collection > div.mm-cc-hd > div > div.mm-cc-chart-stats-title.pb-2.d-flex.flex-wrap.align-items-baseline > div.stat-val > span.val")
 }
 
 // getAAACompanyYield retrieves the current AAA corporate bond yield from macromicro.me.
 // It returns the yield value as a float64 and any error encountered during the process.
 func getAAACompanyYield() (float64, error) {
+	return getTreasuryYield("https://sc.macromicro.me/series/618/moodys-aaa", "#panel > main > div > div.mm-cc-hd > div > div.mm-cc-chart-stats-title.pb-2.d-flex.flex-wrap.align-items-baseline > div.stat-val > span.val")
+}
+
+// getTreasuryYield 是一个通用函数，用于获取财务收益率数据
+func getTreasuryYield(url, selector string) (float64, error) {
 	// 构造请求
-	req, err := http.NewRequest("GET", "https://sc.macromicro.me/series/618/moodys-aaa", nil)
+	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return 0, err
 	}
 	// 模拟 Chrome 浏览器 UA
 	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
 
-	client := &http.Client{}
-	resp, err := client.Do(req)
+	resp, err := defaultHTTPClient.Do(req)
 	if err != nil {
 		return 0, err
 	}
@@ -133,7 +114,7 @@ func getAAACompanyYield() (float64, error) {
 	}
 
 	// 用 CSS selector 抓取
-	selection := doc.Find("#panel > main > div > div.mm-cc-hd > div > div.mm-cc-chart-stats-title.pb-2.d-flex.flex-wrap.align-items-baseline > div.stat-val > span.val").First()
+	selection := doc.Find(selector).First()
 	text := strings.TrimSpace(selection.Text())
 
 	// 转 float

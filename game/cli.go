@@ -39,7 +39,7 @@ var gameCmd = &cobra.Command{
 // chooseDevice prompts the user to select an Android device from the list of connected devices.
 // It returns the selected device ID or an error if no devices are found or user input is invalid.
 func chooseDevice() (string, error) {
-	cmd := exec.Command("adb", "devices")
+	cmd := execCommand("adb", "devices")
 	out, err := cmd.Output()
 	if err != nil {
 		return "", err
@@ -85,11 +85,13 @@ func chooseDevice() (string, error) {
 	}
 }
 
+// 为了测试目的，定义一个可替换的执行命令函数
+var execCommand = exec.Command
+
 // executeCLick executes an ADB tap command on the specified device at coordinates (1800, 900).
 // This is used for game automation to perform tap actions.
 func executeCLick(device string) error {
-
-	cmd := exec.Command("adb", "-s", device, "shell", "input", "tap", "1800", "900")
+	cmd := execCommand("adb", "-s", device, "shell", "input", "tap", "1800", "900")
 	out, err := cmd.CombinedOutput()
 	if err != nil {
 		return err

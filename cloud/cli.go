@@ -14,6 +14,10 @@ var rebootCmd = &cobra.Command{
 	Long:  `Reboot a cloud instance specified by the destination name.`,
 	Args:  cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
+		if len(args) < 1 {
+			return errors.New("destination must exists")
+		}
+		
 		destination := args[0]
 
 		if destination == "" {
