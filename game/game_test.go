@@ -6,9 +6,6 @@ import (
 	"testing"
 )
 
-// 保存原始函数以便测试后恢复
-var originalExecCommand = execCommand
-
 func TestChooseDevice(t *testing.T) {
 	t.Run("NoDevicesFound", func(t *testing.T) {
 		// 保存原始函数

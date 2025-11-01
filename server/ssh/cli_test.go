@@ -10,9 +10,6 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-// 保存原始函数以便测试后恢复
-var originalExecCommand = execCommand
-
 func TestSSHCommand(t *testing.T) {
 	t.Run("ValidDestination", func(t *testing.T) {
 		// 创建临时测试目录
