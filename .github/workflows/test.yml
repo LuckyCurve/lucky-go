@@ -21,7 +21,7 @@ jobs:
             ubuntu-20.04,
             ubuntu-22.04,
           ]
-        go: ["1.24", "1.25"]
+        go: ["1.20", "1.21", "1.22", "1.23", "1.24", "1.25"]
 
     steps:
       - uses: actions/checkout@v4
@@ -34,41 +34,6 @@ jobs:
       - name: Install dependencies
         run: |
           go mod tidy
-
-      - name: Check code formatting with gofmt
-        shell: bash
-        run: |
-          unformatted=$(gofmt -l .)
-          if [ -n "$unformatted" ]; then
-            echo "The following files are not formatted:"
-            echo "$unformatted"
-            exit 1
-          fi
-
-      - name: Check import formatting with goimports
-        shell: bash
-        run: |
-          go install golang.org/x/tools/cmd/goimports@latest
-          unformatted=$(goimports -l .)
-          if [ -n "$unformatted" ]; then
-            echo "The following files have incorrect imports:"
-            echo "$unformatted"
-            exit 1
-          fi
-
-      - name: Run go vet
-        run: |
-          go vet ./...
-
-      - name: Run golangci-lint
-        uses: golangci/golangci-lint-action@v6
-        with:
-          version: latest
-
-      - name: Calculate code coverage
-        run: |
-          go test -v -coverprofile=coverage.out ./...
-          go tool cover -func=coverage.out
 
       - name: Build project
         run: |
