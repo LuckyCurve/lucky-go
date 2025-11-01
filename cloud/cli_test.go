@@ -6,8 +6,8 @@ import (
 	"path/filepath"
 	"testing"
 
-	"lucky-go/config"
 	"gopkg.in/yaml.v3"
+	"lucky-go/config"
 )
 
 func TestRebootCommand(t *testing.T) {
@@ -15,7 +15,7 @@ func TestRebootCommand(t *testing.T) {
 	tempDir := t.TempDir()
 	originalHomeDir := os.Getenv("HOME")
 	originalUserProfile := os.Getenv("USERPROFILE")
-	
+
 	os.Setenv("HOME", tempDir)
 	os.Setenv("USERPROFILE", tempDir)
 	defer os.Setenv("HOME", originalHomeDir)
@@ -52,7 +52,7 @@ func TestRebootCommand(t *testing.T) {
 
 	t.Run("ValidDestination", func(t *testing.T) {
 		cmd := NewCommand()
-		
+
 		// 为测试目的替换内部函数
 		originalFunc := rebootInstanceFunc
 		rebootInstanceFunc = func(dest *config.DestinationInstance) error {
@@ -75,7 +75,7 @@ func TestRebootCommand(t *testing.T) {
 		// 为避免运行命令时出现错误，我们不直接调用RunE
 		// 而是测试命令配置
 		cmd := NewCommand()
-		
+
 		// 验证命令配置
 		if cmd.Args == nil {
 			t.Error("expected Args to be set")
@@ -84,7 +84,7 @@ func TestRebootCommand(t *testing.T) {
 
 	t.Run("NonExistentDestination", func(t *testing.T) {
 		cmd := NewCommand()
-		
+
 		// 为测试目的替换内部函数
 		originalFunc := rebootInstanceFunc
 		defer func() {

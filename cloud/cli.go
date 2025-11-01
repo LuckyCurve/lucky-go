@@ -17,7 +17,7 @@ var rebootCmd = &cobra.Command{
 		if len(args) < 1 {
 			return errors.New("destination must exists")
 		}
-		
+
 		destination := args[0]
 
 		if destination == "" {

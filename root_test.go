@@ -20,7 +20,7 @@ func TestExecute(t *testing.T) {
 		defer func() {
 			rootCmd = originalRootCmd
 		}()
-		
+
 		// 由于Execute()函数会调用os.Exit，我们不能直接测试它
 		// 而是测试命令结构
 		if rootCmd.Use != "test" {
@@ -31,12 +31,12 @@ func TestExecute(t *testing.T) {
 
 func TestRootCommandStructure(t *testing.T) {
 	// 测试现有命令的结构
-	
+
 	// 测试命令基本信息
 	if rootCmd.Use != "lucky-go" {
 		t.Errorf("expected command use 'lucky-go', got '%s'", rootCmd.Use)
 	}
-	
+
 	// 检查是否有 --toggle 标志
 	if rootCmd.Flags().Lookup("toggle") == nil {
 		t.Error("expected --toggle flag, got none")

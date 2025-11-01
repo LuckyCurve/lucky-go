@@ -22,7 +22,7 @@ var peCmd = &cobra.Command{
 			value float64
 			err   error
 		}
-		
+
 		treasuryCh := make(chan result, 1)
 		aaaCh := make(chan result, 1)
 

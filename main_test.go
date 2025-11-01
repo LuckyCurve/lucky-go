@@ -19,7 +19,7 @@ func TestExecuteFunction(t *testing.T) {
 		// 注意: 由于Execute调用了os.Exit，我们不能直接测试其完整执行
 		// 这里的测试只是确认函数存在且语法正确
 	})
-	
+
 	// 注意: 由于Execute调用了os.Exit，我们不能直接测试其完整执行
 	// 在实际项目中，您可能需要重构代码以支持更好的测试
 }

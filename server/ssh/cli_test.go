@@ -5,8 +5,8 @@ import (
 	"os/exec"
 	"testing"
 
-	"lucky-go/config"
 	"gopkg.in/yaml.v3"
+	"lucky-go/config"
 )
 
 // 保存原始函数以便测试后恢复
@@ -18,7 +18,7 @@ func TestSSHCommand(t *testing.T) {
 		tempDir := t.TempDir()
 		originalHomeDir := os.Getenv("HOME")
 		originalUserProfile := os.Getenv("USERPROFILE")
-		
+
 		os.Setenv("HOME", tempDir)
 		os.Setenv("USERPROFILE", tempDir)
 		defer os.Setenv("HOME", originalHomeDir)
@@ -52,13 +52,13 @@ func TestSSHCommand(t *testing.T) {
 		if err != nil {
 			t.Fatalf("failed to write config file: %v", err)
 		}
-		
+
 		// 保存原始命令执行函数
 		originalExecCommand := execCommand
 		defer func() {
 			execCommand = originalExecCommand
 		}()
-		
+
 		// 模拟ssh命令成功执行
 		execCommand = func(name string, arg ...string) *exec.Cmd {
 			cs := []string{"-test.run=TestHelperProcess", "--", name}
@@ -67,28 +67,28 @@ func TestSSHCommand(t *testing.T) {
 			cmd.Env = []string{"GO_HELPER_PROCESS=1", "SSH_OUTPUT="}
 			return cmd
 		}
-		
+
 		cmd := NewCommand()
 		err = cmd.RunE(cmd, []string{"test-server"})
 		if err != nil {
 			t.Errorf("expected no error, got: %v", err)
 		}
 	})
-	
+
 	t.Run("NoDestinationProvided", func(t *testing.T) {
 		// 为避免运行命令时出现错误，我们不直接调用RunE
 		// 而是测试命令配置
 		cmd := NewCommand()
-		
+
 		// 验证命令配置
 		if cmd.Args == nil {
 			t.Error("expected Args to be set")
 		}
 	})
-	
+
 	t.Run("NonExistentDestination", func(t *testing.T) {
 		cmd := NewCommand()
-		
+
 		err := cmd.RunE(cmd, []string{"non-existent"})
 		if err == nil {
 			t.Error("expected error for non-existent destination, got nil")
@@ -99,15 +99,15 @@ func TestSSHCommand(t *testing.T) {
 func TestNewCommand(t *testing.T) {
 	t.Run("CommandStructure", func(t *testing.T) {
 		cmd := NewCommand()
-		
+
 		if cmd.Use != "ssh [destination]" {
 			t.Errorf("expected command use 'ssh [destination]', got '%s'", cmd.Use)
 		}
-		
+
 		if cmd.Short != "Build SSH connection with destination" {
 			t.Errorf("expected different short description, got '%s'", cmd.Short)
 		}
-		
+
 		// 检查是否有子命令
 		subcommands := cmd.Commands()
 		if len(subcommands) == 0 {
@@ -119,15 +119,15 @@ func TestNewCommand(t *testing.T) {
 func TestServeCommand(t *testing.T) {
 	t.Run("ServeCommandStructure", func(t *testing.T) {
 		serveCmd := newCommand()
-		
+
 		if serveCmd.Use != "serve" {
 			t.Errorf("expected command use 'serve', got '%s'", serveCmd.Use)
 		}
-		
+
 		if serveCmd.Short != "Run the HTTP server" {
 			t.Errorf("expected different short description, got '%s'", serveCmd.Short)
 		}
-		
+
 		// 检查是否有 --port 标志
 		if serveCmd.Flags().Lookup("port") == nil {
 			t.Error("expected --port flag, got none")
@@ -140,14 +140,14 @@ func TestHelperProcess(t *testing.T) {
 	if os.Getenv("GO_HELPER_PROCESS") != "1" {
 		return
 	}
-	
+
 	cmd := os.Args[3] // 第一个参数是test标志，第二个是"--"，第三个是命令名
-	
+
 	// 根据命令类型返回不同的输出
 	if os.Getenv("EXEC_ERROR") == "1" {
 		os.Exit(1) // 模拟命令执行失败
 	}
-	
+
 	if cmd == "ssh" {
 		// 模拟SSH命令成功执行
 		output := os.Getenv("SSH_OUTPUT")
@@ -155,6 +155,6 @@ func TestHelperProcess(t *testing.T) {
 			os.Stdout.Write([]byte(output))
 		}
 	}
-	
+
 	os.Exit(0)
 }

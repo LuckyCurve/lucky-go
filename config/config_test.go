@@ -14,7 +14,7 @@ func TestLoadDestinationInstance(t *testing.T) {
 	originalHomeDir := os.Getenv("HOME")
 	// 在Windows上，UserHomeDir()使用USERPROFILE
 	originalUserProfile := os.Getenv("USERPROFILE")
-	
+
 	// 设置临时目录为HOME和USERPROFILE
 	os.Setenv("HOME", tempDir)
 	os.Setenv("USERPROFILE", tempDir)
@@ -89,7 +89,7 @@ func TestConfig_SaveConfig(t *testing.T) {
 	tempDir := t.TempDir()
 	originalHomeDir := os.Getenv("HOME")
 	originalUserProfile := os.Getenv("USERPROFILE")
-	
+
 	os.Setenv("HOME", tempDir)
 	os.Setenv("USERPROFILE", tempDir)
 	defer os.Setenv("HOME", originalHomeDir)
@@ -146,7 +146,7 @@ func TestGetConfigFilePath(t *testing.T) {
 	tempDir := t.TempDir()
 	originalHomeDir := os.Getenv("HOME")
 	originalUserProfile := os.Getenv("USERPROFILE")
-	
+
 	os.Setenv("HOME", tempDir)
 	os.Setenv("USERPROFILE", tempDir)
 	defer os.Setenv("HOME", originalHomeDir)
