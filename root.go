@@ -10,19 +10,19 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// rootCmd represents the base command when called without any subcommands
+// rootCmd 表示在不带任何子命令的情况下调用时的基础命令
 var rootCmd = &cobra.Command{
 	Use:   "lucky-go",
-	Short: "A CLI tool for various utilities including cloud, finance, game and server operations",
-	Long: `lucky-go is a CLI application that provides utilities for interacting with cloud services, 
-analyzing financial data, managing game automation, and server operations.`,
+	Short: "一个用于各种实用工具的CLI，包括云、金融、游戏和服务器操作",
+	Long: `lucky-go 是一个CLI应用程序，提供与云服务交互、
+分析金融数据、管理游戏自动化和服务器操作的实用工具。`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	// Run: func(cmd *cobra.Command, args []string) { },
 }
 
-// Execute executes the root command and handles any errors by exiting with status 1.
-// This function is called by main.main() and only needs to be executed once.
+// Execute 执行根命令并通过退出状态1处理任何错误。
+// 此函数由 main.main() 调用，且只需执行一次。
 func Execute() {
 	err := rootCmd.Execute()
 	if err != nil {
@@ -31,15 +31,14 @@ func Execute() {
 }
 
 func init() {
-	// Here you will define your flags and configuration settings.
-	// Cobra supports persistent flags, which, if defined here,
-	// will be global for your application.
+	// 在这里定义标志和配置设置。
+	// Cobra 支持持久标志，如果在此处定义，
+	// 将对应用程序全局有效。
 
 	// rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.lucky-go.yaml)")
 
-	// Cobra also supports local flags, which will only run
-	// when this action is called directly.
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// Cobra 还支持本地标志，仅在直接调用此操作时运行。
+	rootCmd.Flags().BoolP("toggle", "t", false, "切换选项的帮助消息")
 
 	rootCmd.AddCommand(ssh.NewCommand())
 	rootCmd.AddCommand(cloud.NewCommand())

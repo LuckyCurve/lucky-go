@@ -13,8 +13,8 @@ import (
 // 定义函数变量，用于在测试中模拟
 var rebootInstanceFunc = defaultRebootInstance
 
-// RebootInstance sends a reboot request to the Tencent Cloud platform for the specified destination instance.
-// It uses the Tencent Cloud SDK to connect and performs the reboot operation.
+// RebootInstance 向腾讯云平台发送重启请求以重启指定的目标实例。
+// 它使用腾讯云SDK进行连接并执行重启操作。
 func RebootInstance(dest *config.DestinationInstance) error {
 	return rebootInstanceFunc(dest)
 }
@@ -36,7 +36,7 @@ func defaultRebootInstance(dest *config.DestinationInstance) error {
 		return err
 	}
 
-	fmt.Printf("request cloud platform response %v", response.ToJsonString())
+	fmt.Printf("请求云平台响应 %v", response.ToJsonString())
 
 	return nil
 }

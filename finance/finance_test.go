@@ -173,7 +173,7 @@ func TestPECommand(t *testing.T) {
 			t.Errorf("expected command use 'pe', got '%s'", cmd.Use)
 		}
 
-		if cmd.Short != "Calculate finance PE ratios based on treasury and AAA company yields" {
+		if cmd.Short != "基于国债和AAA公司收益率计算金融市盈率" {
 			t.Errorf("expected different short description, got '%s'", cmd.Short)
 		}
 	})

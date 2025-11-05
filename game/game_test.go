@@ -27,8 +27,8 @@ func TestChooseDevice(t *testing.T) {
 		if err == nil {
 			t.Error("expected error for no devices, got nil")
 		}
-		if err.Error() != "devices not found" {
-			t.Errorf("expected 'devices not found' error, got '%v'", err)
+		if err.Error() != "未找到设备" {
+			t.Errorf("expected '未找到设备' error, got '%v'", err)
 		}
 	})
 
@@ -125,7 +125,7 @@ func TestGameCommand(t *testing.T) {
 			t.Errorf("expected command use 'game', got '%s'", cmd.Use)
 		}
 
-		if cmd.Short != "Start game automation" {
+		if cmd.Short != "启动游戏自动化" {
 			t.Errorf("expected different short description, got '%s'", cmd.Short)
 		}
 	})

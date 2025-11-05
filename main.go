@@ -1,7 +1,7 @@
-// Package main is the entry point for the lucky-go application.
+// Package main 是 lucky-go 应用程序的入口点。
 package main
 
-// main is the entry point of the application.
+// main 是应用程序的入口点。
 func main() {
 	Execute()
 }

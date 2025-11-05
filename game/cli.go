@@ -1,4 +1,4 @@
-// Package game provides utilities for game automation.
+// Package game 提供游戏自动化实用工具。
 package game
 
 import (
@@ -13,11 +13,11 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// gameCmd represents the game automation command
+// gameCmd 表示游戏自动化命令
 var gameCmd = &cobra.Command{
 	Use:   "game",
-	Short: "Start game automation",
-	Long:  `Start automated clicking for game hang out.`,
+	Short: "启动游戏自动化",
+	Long:  `开始游戏挂机的自动点击。`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 
 		device, err := chooseDevice()
@@ -36,8 +36,8 @@ var gameCmd = &cobra.Command{
 	},
 }
 
-// chooseDevice prompts the user to select an Android device from the list of connected devices.
-// It returns the selected device ID or an error if no devices are found or user input is invalid.
+// chooseDevice 提示用户从连接的设备列表中选择一个Android设备。
+// 如果未找到设备或用户输入无效，则返回所选设备ID或错误。
 func chooseDevice() (string, error) {
 	cmd := execCommand("adb", "devices")
 	out, err := cmd.Output()
@@ -60,7 +60,7 @@ func chooseDevice() (string, error) {
 	}
 
 	if len(devices) == 0 {
-		return "", fmt.Errorf("devices not found")
+		return "", fmt.Errorf("未找到设备")
 	} else if len(devices) == 1 {
 		return devices[0], nil
 	} else {
@@ -88,8 +88,8 @@ func chooseDevice() (string, error) {
 // 为了测试目的，定义一个可替换的执行命令函数
 var execCommand = exec.Command
 
-// executeCLick executes an ADB tap command on the specified device at coordinates (1800, 900).
-// This is used for game automation to perform tap actions.
+// executeCLick 在指定设备的坐标(1800, 900)上执行ADB点击命令。
+// 这用于游戏自动化以执行点击操作。
 func executeCLick(device string) error {
 	cmd := execCommand("adb", "-s", device, "shell", "input", "tap", "1800", "900")
 	out, err := cmd.CombinedOutput()
@@ -98,12 +98,12 @@ func executeCLick(device string) error {
 	}
 
 	if len(out) > 0 {
-		fmt.Printf("execute command return: %v\n", string(out))
+		fmt.Printf("执行命令返回: %v\n", string(out))
 	}
 	return nil
 }
 
-// NewCommand creates and returns the game automation command for the game module.
+// NewCommand 为游戏模块创建并返回游戏自动化命令。
 func NewCommand() *cobra.Command {
 	return gameCmd
 }

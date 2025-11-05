@@ -102,7 +102,7 @@ func TestNewCommand(t *testing.T) {
 			t.Errorf("expected command use 'ssh [destination]', got '%s'", cmd.Use)
 		}
 
-		if cmd.Short != "Build SSH connection with destination" {
+		if cmd.Short != "与目标建立 SSH 连接" {
 			t.Errorf("expected different short description, got '%s'", cmd.Short)
 		}
 
@@ -122,7 +122,7 @@ func TestServeCommand(t *testing.T) {
 			t.Errorf("expected command use 'serve', got '%s'", serveCmd.Use)
 		}
 
-		if serveCmd.Short != "Run the HTTP server" {
+		if serveCmd.Short != "运行 HTTP 服务器" {
 			t.Errorf("expected different short description, got '%s'", serveCmd.Short)
 		}
 

@@ -1,5 +1,5 @@
-// Package config handles configuration loading and saving for the lucky-go application.
-// It provides functionality for loading destination instances and saving configuration data.
+// Package config 处理 lucky-go 应用程序的配置加载和保存。
+// 它提供加载目标实例和保存配置数据的功能。
 package config
 
 import (
@@ -13,24 +13,24 @@ import (
 const CONFIG_DIR = ".lucky-go"
 const CONFIG_FILE = "config.yaml"
 
-// Config represents the main configuration structure for the application.
+// Config 表示应用程序的主要配置结构。
 type Config struct {
-	// Dest maps destination names to destination instances
+	// Dest 将目标名称映射到目标实例
 	Dest map[string]DestinationInstance `yaml:"dest"`
 }
 
-// DestinationInstance represents a cloud instance with SSH connection details.
+// DestinationInstance 表示具有SSH连接详细信息的云实例。
 type DestinationInstance struct {
-	// Ssh contains the SSH connection string
+	// Ssh 包含SSH连接字符串
 	Ssh string `yaml:"ssh"`
-	// Region specifies the cloud region
+	// Region 指定云区域
 	Region string `yaml:"region"`
-	// InstanceId is the unique identifier for the instance
+	// InstanceId 是实例的唯一标识符
 	InstanceId string `yaml:"instance-id"`
 }
 
-// SaveConfig saves the configuration to the config file.
-// It marshals the config struct to YAML format and writes it to the config file.
+// SaveConfig 将配置保存到配置文件中。
+// 它将配置结构体编组为YAML格式并写入配置文件。
 func (config Config) SaveConfig() error {
 	bytes, err := yaml.Marshal(config)
 	if err != nil {
@@ -45,8 +45,8 @@ func (config Config) SaveConfig() error {
 	return os.WriteFile(path, bytes, 0644)
 }
 
-// LoadDestinationInstance loads a destination instance from the configuration by name.
-// It returns the destination instance and any error encountered while loading the config.
+// LoadDestinationInstance 按名称从配置中加载目标实例。
+// 它返回目标实例和加载配置时遇到的任何错误。
 func LoadDestinationInstance(dest string) (*DestinationInstance, error) {
 	config, err := loadConfig()
 	if err != nil {
@@ -55,14 +55,14 @@ func LoadDestinationInstance(dest string) (*DestinationInstance, error) {
 
 	res, ok := config.Dest[dest]
 	if !ok {
-		return nil, fmt.Errorf("not destination %v in config", dest)
+		return nil, fmt.Errorf("配置中不存在目标 %v", dest)
 	}
 
 	return &res, nil
 }
 
-// loadConfig loads the configuration from the config file.
-// It reads the YAML file and unmarshals it into a Config struct.
+// loadConfig 从配置文件中加载配置。
+// 它读取YAML文件并将其解组到Config结构体中。
 func loadConfig() (*Config, error) {
 	path, err := getConfigFilePath()
 	if err != nil {
@@ -84,8 +84,8 @@ func loadConfig() (*Config, error) {
 	return &config, nil
 }
 
-// getConfigFilePath returns the path to the config file, creating directories if needed.
-// It ensures the config directory and file exist, creating them if they don't.
+// getConfigFilePath 返回配置文件的路径，必要时创建目录。
+// 它确保配置目录和文件存在，如果不存在则创建它们。
 func getConfigFilePath() (string, error) {
 	homeDir, _ := os.UserHomeDir()
 	configDir := filepath.Join(homeDir, CONFIG_DIR)

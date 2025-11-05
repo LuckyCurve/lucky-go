@@ -77,7 +77,7 @@ func TestLoadDestinationInstance(t *testing.T) {
 		if err == nil {
 			t.Error("expected error for non-existent destination, got nil")
 		}
-		expected := "not destination non-existent in config"
+		expected := "配置中不存在目标 non-existent"
 		if err.Error() != expected {
 			t.Errorf("expected error '%s', got '%s'", expected, err.Error())
 		}

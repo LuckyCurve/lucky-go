@@ -1,4 +1,4 @@
-// Package finance provides financial calculations and data retrieval functionality.
+// Package finance 提供金融计算和数据检索功能。
 package finance
 
 import (
@@ -11,11 +11,11 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// peCmd represents the price-to-earnings ratio calculation command
+// peCmd 表示市盈率计算命令
 var peCmd = &cobra.Command{
 	Use:   "pe",
-	Short: "Calculate finance PE ratios based on treasury and AAA company yields",
-	Long:  `Calculate price-to-earnings ratios using current 10-year treasury and AAA corporate bond yields as benchmarks.`,
+	Short: "基于国债和AAA公司收益率计算金融市盈率",
+	Long:  `使用当前10年期国债和AAA公司债券收益率作为基准计算市盈率。`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		// 使用通道接收结果和错误
 		type result struct {
@@ -79,14 +79,14 @@ type HTTPClient interface {
 // 默认HTTP客户端
 var defaultHTTPClient HTTPClient = &http.Client{}
 
-// get10YearTreasuryYield retrieves the current 10-year treasury yield from macromicro.me.
-// It returns the yield value as a float64 and any error encountered during the process.
+// get10YearTreasuryYield 从 macromicro.me 获取当前10年期国债收益率。
+// 它返回收益率值作为 float64 以及在此过程中遇到的任何错误。
 func get10YearTreasuryYield() (float64, error) {
 	return getTreasuryYield("https://sc.macromicro.me/series/354/10year-bond-yield", "#panel > main > div.mm-chart-collection > div.mm-cc-hd > div > div.mm-cc-chart-stats-title.pb-2.d-flex.flex-wrap.align-items-baseline > div.stat-val > span.val")
 }
 
-// getAAACompanyYield retrieves the current AAA corporate bond yield from macromicro.me.
-// It returns the yield value as a float64 and any error encountered during the process.
+// getAAACompanyYield 从 macromicro.me 获取当前AAA公司债券收益率。
+// 它返回收益率值作为 float64 以及在此过程中遇到的任何错误。
 func getAAACompanyYield() (float64, error) {
 	return getTreasuryYield("https://sc.macromicro.me/series/618/moodys-aaa", "#panel > main > div > div.mm-cc-hd > div > div.mm-cc-chart-stats-title.pb-2.d-flex.flex-wrap.align-items-baseline > div.stat-val > span.val")
 }
@@ -126,7 +126,7 @@ func getTreasuryYield(url, selector string) (float64, error) {
 	return val, nil
 }
 
-// NewCommand creates and returns the PE calculation command for the finance module.
+// NewCommand 为金融模块创建并返回市盈率计算命令。
 func NewCommand() *cobra.Command {
 	return peCmd
 }
