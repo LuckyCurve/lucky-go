@@ -13,8 +13,8 @@ github.com/spf13/pflag v1.0.9/go.mod h1:McXfInJRrz4CZXVZOBLb0bTZqETkiAhM9Iw0y3An
 github.com/spf13/pflag v1.0.10 h1:4EBh2KAYBwaONj6b2Ye1GiHfwjqyROoF4RwYO+vPwFk=
 github.com/spf13/pflag v1.0.10/go.mod h1:McXfInJRrz4CZXVZOBLb0bTZqETkiAhM9Iw0y3An2Bg=
 github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.1.45/go.mod h1:r5r4xbfxSaeR04b166HGsBa/R4U3SueirEUpXGuw+Q0=
-github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.1.48 h1:aoRUrz2ag27jQWcOKHgeE+toSti6/xPqHKMLruOtJuM=
-github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.1.48/go.mod h1:r5r4xbfxSaeR04b166HGsBa/R4U3SueirEUpXGuw+Q0=
+github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.1.49 h1:BQwUw2V21zIRJxstnaxtG/22lBL3+FbUgWhaC6Qd9ws=
+github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.1.49/go.mod h1:r5r4xbfxSaeR04b166HGsBa/R4U3SueirEUpXGuw+Q0=
 github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/lighthouse v1.1.45 h1:KuvKhJCsVfA4TcdgMeYNweWCCBMco17Yf1LW3ltMXh4=
 github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/lighthouse v1.1.45/go.mod h1:Fr/Qh84VAGiiwH/mTSKZgR8Df6yhLxT5oJjwTouWBaQ=
 github.com/yuin/goldmark v1.4.13/go.mod h1:6yULJ656Px+3vBD8DxQVa3kxgyrAnzto9xy5taEt/CY=
