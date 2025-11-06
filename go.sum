@@ -12,11 +12,10 @@ github.com/spf13/cobra v1.10.1/go.mod h1:7SmJGaTHFVBY0jW4NXGluQoLvhqFQM+6XSKD+P4
 github.com/spf13/pflag v1.0.9/go.mod h1:McXfInJRrz4CZXVZOBLb0bTZqETkiAhM9Iw0y3An2Bg=
 github.com/spf13/pflag v1.0.10 h1:4EBh2KAYBwaONj6b2Ye1GiHfwjqyROoF4RwYO+vPwFk=
 github.com/spf13/pflag v1.0.10/go.mod h1:McXfInJRrz4CZXVZOBLb0bTZqETkiAhM9Iw0y3An2Bg=
-github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.1.45/go.mod h1:r5r4xbfxSaeR04b166HGsBa/R4U3SueirEUpXGuw+Q0=
-github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.1.49 h1:BQwUw2V21zIRJxstnaxtG/22lBL3+FbUgWhaC6Qd9ws=
-github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.1.49/go.mod h1:r5r4xbfxSaeR04b166HGsBa/R4U3SueirEUpXGuw+Q0=
-github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/lighthouse v1.1.45 h1:KuvKhJCsVfA4TcdgMeYNweWCCBMco17Yf1LW3ltMXh4=
-github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/lighthouse v1.1.45/go.mod h1:Fr/Qh84VAGiiwH/mTSKZgR8Df6yhLxT5oJjwTouWBaQ=
+github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.1.50 h1:wZGiUXmzr4L0S1coFhnjddkyNrO5ZTtfxBDrbeR+1d8=
+github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.1.50/go.mod h1:r5r4xbfxSaeR04b166HGsBa/R4U3SueirEUpXGuw+Q0=
+github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/lighthouse v1.1.50 h1:QzINDvrVWyor82HOSXeOWj0f8fXl0NYnJEme4ete5Vs=
+github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/lighthouse v1.1.50/go.mod h1:TBExWTR2MTOmKPPfhe9EmkDISk6/OIoS7dQz/xUzmJ4=
 github.com/yuin/goldmark v1.4.13/go.mod h1:6yULJ656Px+3vBD8DxQVa3kxgyrAnzto9xy5taEt/CY=
 golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACkg1iLfiJU5Ep61QUkGW8qpdssI0+w=
 golang.org/x/crypto v0.0.0-20210921155107-089bfa567519/go.mod h1:GvvjBRRGRdwPK5ydBHafDWAxML/pGHZbMvKqRZ5+Abc=
