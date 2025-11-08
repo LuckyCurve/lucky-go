@@ -5,7 +5,7 @@ go 1.24.0
 require (
 	github.com/PuerkitoBio/goquery v1.10.3
 	github.com/spf13/cobra v1.10.1
-	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.1.50
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.1.51
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/lighthouse v1.1.50
 	gopkg.in/yaml.v3 v3.0.1
 )
