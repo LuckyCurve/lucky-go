@@ -53,41 +53,51 @@ var peCmd = &cobra.Command{
 		// 使用颜色定义
 		titleColor := color.New(color.FgCyan, color.Bold)
 		valueColor := color.New(color.FgBlue)
-		pe50Color := color.New(color.FgGreen)
-		pe75Color := color.New(color.FgMagenta)
-		pe100Color := color.New(color.FgRed)
-		pe125Color := color.New(color.FgYellow)
-		pe150Color := color.New(color.FgCyan)
+		pe50Color := color.New(color.FgGreen)            // 低估值
+		pe75Color := color.New(color.FgYellow)           // 中等估值
+		pe100Color := color.New(color.FgBlue)            // 基准估值
+		pe125Color := color.New(color.FgRed)             // 高估值
+		pe150Color := color.New(color.FgRed, color.Bold) // 很高估值
 
 		// 输出 10 年期国债收益率相关计算
-		titleColor.Println("┌────────────────────────────────────────────────────────────────────────┐")
-		titleColor.Printf("│ 📊 基于10年期国债收益率的市盈率计算\n")
-		fmt.Printf("│ 📈 10年期国债收益率: ")
+		titleColor.Println("┌─────────────────────┐")
+		titleColor.Printf("│ 📊 国债收益率 PE 计算\n")
+		fmt.Printf("│ 收益率: ")
 		valueColor.Printf("%.2f%%\n", treasuryResult.value)
+		titleColor.Println("├─────────────────────┤")
 
-		fmt.Printf("│    ")
-		pe50Color.Printf("50%% PE: %.2f  ", 50/treasuryResult.value)
-		pe75Color.Printf("75%% PE: %.2f  ", 75/treasuryResult.value)
-		pe100Color.Printf("100%% PE: %.2f  ", 100/treasuryResult.value)
-		pe125Color.Printf("125%% PE: %.2f  ", 125/treasuryResult.value)
-		pe150Color.Printf("150%% PE: %.2f\n", 150/treasuryResult.value)
-		titleColor.Println("└────────────────────────────────────────────────────────────────────────┘")
+		fmt.Printf("│ ")
+		pe50Color.Printf("%-8s %.2f\n", "50% PE:", 50/treasuryResult.value)
+		fmt.Printf("│ ")
+		pe75Color.Printf("%-8s %.2f\n", "75% PE:", 75/treasuryResult.value)
+		fmt.Printf("│ ")
+		pe100Color.Printf("%-8s %.2f\n", "100% PE:", 100/treasuryResult.value)
+		fmt.Printf("│ ")
+		pe125Color.Printf("%-8s %.2f\n", "125% PE:", 125/treasuryResult.value)
+		fmt.Printf("│ ")
+		pe150Color.Printf("%-8s %.2f\n", "150% PE:", 150/treasuryResult.value)
+		titleColor.Println("└─────────────────────┘")
 
 		fmt.Print("\n\n")
 
 		// 输出 AAA 公司债券收益率相关计算
-		titleColor.Println("┌────────────────────────────────────────────────────────────────────────┐")
-		titleColor.Printf("│ 📊 基于AAA公司债券收益率的市盈率计算\n")
-		fmt.Printf("│ 📈 AAA公司债券收益率: ")
+		titleColor.Println("┌─────────────────────┐")
+		titleColor.Printf("│ 📊 AAA债券收益率 PE 计算\n")
+		fmt.Printf("│ 收益率: ")
 		valueColor.Printf("%.2f%%\n", aaaResult.value)
+		titleColor.Println("├─────────────────────┤")
 
-		fmt.Printf("│    ")
-		pe50Color.Printf("50%% PE: %.2f  ", 50/aaaResult.value)
-		pe75Color.Printf("75%% PE: %.2f  ", 75/aaaResult.value)
-		pe100Color.Printf("100%% PE: %.2f  ", 100/aaaResult.value)
-		pe125Color.Printf("125%% PE: %.2f  ", 125/aaaResult.value)
-		pe150Color.Printf("150%% PE: %.2f\n", 150/aaaResult.value)
-		titleColor.Println("└────────────────────────────────────────────────────────────────────────┘")
+		fmt.Printf("│ ")
+		pe50Color.Printf("%-8s %.2f\n", "50% PE:", 50/aaaResult.value)
+		fmt.Printf("│ ")
+		pe75Color.Printf("%-8s %.2f\n", "75% PE:", 75/aaaResult.value)
+		fmt.Printf("│ ")
+		pe100Color.Printf("%-8s %.2f\n", "100% PE:", 100/aaaResult.value)
+		fmt.Printf("│ ")
+		pe125Color.Printf("%-8s %.2f\n", "125% PE:", 125/aaaResult.value)
+		fmt.Printf("│ ")
+		pe150Color.Printf("%-8s %.2f\n", "150% PE:", 150/aaaResult.value)
+		titleColor.Println("└─────────────────────┘")
 
 		return nil
 	},
