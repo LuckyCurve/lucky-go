@@ -4,11 +4,12 @@ package finance
 import (
 	"fmt"
 	"net/http"
+	"os"
 	"strconv"
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
-	"github.com/fatih/color"
+	"github.com/olekukonko/tablewriter"
 	"github.com/spf13/cobra"
 )
 
@@ -50,54 +51,26 @@ var peCmd = &cobra.Command{
 			return aaaResult.err
 		}
 
-		// 使用颜色定义
-		titleColor := color.New(color.FgCyan, color.Bold)
-		valueColor := color.New(color.FgBlue)
-		pe50Color := color.New(color.FgGreen)            // 低估值
-		pe75Color := color.New(color.FgYellow)           // 中等估值
-		pe100Color := color.New(color.FgBlue)            // 基准估值
-		pe125Color := color.New(color.FgRed)             // 高估值
-		pe150Color := color.New(color.FgRed, color.Bold) // 很高估值
+		// 使用 tablewriter 渲染合并的表格（两列并排）
+		treasuryPEs := [5]float64{
+			50 / treasuryResult.value,
+			75 / treasuryResult.value,
+			100 / treasuryResult.value,
+			125 / treasuryResult.value,
+			150 / treasuryResult.value,
+		}
+		aaaPEs := [5]float64{
+			50 / aaaResult.value,
+			75 / aaaResult.value,
+			100 / aaaResult.value,
+			125 / aaaResult.value,
+			150 / aaaResult.value,
+		}
 
-		// 输出 10 年期国债收益率相关计算
-		titleColor.Println("┌─────────────────────┐")
-		titleColor.Printf("│ 📊 国债收益率 PE 计算\n")
-		fmt.Printf("│ 收益率: ")
-		valueColor.Printf("%.2f%%\n", treasuryResult.value)
-		titleColor.Println("├─────────────────────┤")
-
-		fmt.Printf("│ ")
-		pe50Color.Printf("%-8s %.2f\n", "50% PE:", 50/treasuryResult.value)
-		fmt.Printf("│ ")
-		pe75Color.Printf("%-8s %.2f\n", "75% PE:", 75/treasuryResult.value)
-		fmt.Printf("│ ")
-		pe100Color.Printf("%-8s %.2f\n", "100% PE:", 100/treasuryResult.value)
-		fmt.Printf("│ ")
-		pe125Color.Printf("%-8s %.2f\n", "125% PE:", 125/treasuryResult.value)
-		fmt.Printf("│ ")
-		pe150Color.Printf("%-8s %.2f\n", "150% PE:", 150/treasuryResult.value)
-		titleColor.Println("└─────────────────────┘")
-
-		fmt.Print("\n\n")
-
-		// 输出 AAA 公司债券收益率相关计算
-		titleColor.Println("┌─────────────────────┐")
-		titleColor.Printf("│ 📊 AAA债券收益率 PE 计算\n")
-		fmt.Printf("│ 收益率: ")
-		valueColor.Printf("%.2f%%\n", aaaResult.value)
-		titleColor.Println("├─────────────────────┤")
-
-		fmt.Printf("│ ")
-		pe50Color.Printf("%-8s %.2f\n", "50% PE:", 50/aaaResult.value)
-		fmt.Printf("│ ")
-		pe75Color.Printf("%-8s %.2f\n", "75% PE:", 75/aaaResult.value)
-		fmt.Printf("│ ")
-		pe100Color.Printf("%-8s %.2f\n", "100% PE:", 100/aaaResult.value)
-		fmt.Printf("│ ")
-		pe125Color.Printf("%-8s %.2f\n", "125% PE:", 125/aaaResult.value)
-		fmt.Printf("│ ")
-		pe150Color.Printf("%-8s %.2f\n", "150% PE:", 150/aaaResult.value)
-		titleColor.Println("└─────────────────────┘")
+		renderCombinedPETable(
+			"国债收益率", treasuryResult.value, treasuryPEs,
+			"AAA债券收益率", aaaResult.value, aaaPEs,
+		)
 
 		return nil
 	},
@@ -156,6 +129,59 @@ func getTreasuryYield(url, selector string) (float64, error) {
 	}
 
 	return val, nil
+}
+
+// renderCombinedPETable 渲染合并的 PE 表格，包含两列数据
+func renderCombinedPETable(title1 string, yield1 float64, pe1 [5]float64, title2 string, yield2 float64, pe2 [5]float64) {
+	// 创建表格
+	table := tablewriter.NewWriter(os.Stdout)
+
+	// 设置表头（三列：标签、国债、AAA）
+	table.SetHeader([]string{"", fmt.Sprintf("📊 %s", title1), fmt.Sprintf("📊 %s", title2)})
+	table.SetBorder(true)
+	table.SetColumnAlignment([]int{
+		tablewriter.ALIGN_LEFT,
+		tablewriter.ALIGN_RIGHT,
+		tablewriter.ALIGN_RIGHT,
+	})
+	table.SetHeaderAlignment(tablewriter.ALIGN_CENTER)
+	table.SetCenterSeparator("│")
+	table.SetColumnSeparator("│")
+	table.SetRowSeparator("─")
+	table.SetAutoWrapText(false)
+
+	// 定义颜色样式
+	lowPEColor := tablewriter.Colors{tablewriter.FgGreenColor, tablewriter.Bold}
+	midPEColor := tablewriter.Colors{tablewriter.FgYellowColor, tablewriter.Bold}
+	basePEColor := tablewriter.Colors{tablewriter.FgBlueColor, tablewriter.Bold}
+	highPEColor := tablewriter.Colors{tablewriter.FgRedColor, tablewriter.Bold}
+	veryHighPEColor := tablewriter.Colors{tablewriter.FgRedColor, tablewriter.Bold}
+
+	// 添加数据行（三列：标签、国债值、AAA值）
+	labels := []string{"50% PE:", "75% PE:", "100% PE:", "125% PE:", "150% PE:"}
+	colors := []tablewriter.Colors{lowPEColor, midPEColor, basePEColor, highPEColor, veryHighPEColor}
+
+	for i := 0; i < 5; i++ {
+		table.Rich([]string{
+			labels[i],
+			fmt.Sprintf("%.2f", pe1[i]),
+			fmt.Sprintf("%.2f", pe2[i]),
+		}, []tablewriter.Colors{
+			{}, colors[i], colors[i],
+		})
+	}
+
+	// 添加收益率行
+	table.Rich([]string{
+		"收益率",
+		fmt.Sprintf("%.2f%%", yield1),
+		fmt.Sprintf("%.2f%%", yield2),
+	}, []tablewriter.Colors{
+		{}, {}, {},
+	})
+
+	// 渲染表格
+	table.Render()
 }
 
 // NewCommand 为金融模块创建并返回市盈率计算命令。
