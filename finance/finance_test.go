@@ -164,6 +164,41 @@ func TestGetAAACompanyYield(t *testing.T) {
 	})
 }
 
+func TestGetBBBYield(t *testing.T) {
+	t.Run("ValidResponse", func(t *testing.T) {
+		// 保存原始客户端
+		originalClient := defaultHTTPClient
+
+		// 创建模拟响应
+		mockResponse := &http.Response{
+			StatusCode: 200,
+			Body:       io.NopCloser(strings.NewReader(`<html><body><div id="panel"><main><div><div class="mm-cc-hd"><div><div class="mm-cc-chart-stats-title pb-2 d-flex flex-wrap align-items-baseline"><div class="stat-val"><span class="val">5.50</span></div></div></div></div></main></div></body></html>`)),
+		}
+
+		// 替换HTTP客户端
+		defaultHTTPClient = &MockHTTPClient{
+			DoFunc: func(req *http.Request) (*http.Response, error) {
+				return mockResponse, nil
+			},
+		}
+
+		// 恢复原始客户端
+		defer func() {
+			defaultHTTPClient = originalClient
+		}()
+
+		result, err := getBBBYield()
+		if err != nil {
+			t.Errorf("expected no error, got: %v", err)
+		}
+
+		expected := 5.50
+		if result != expected {
+			t.Errorf("expected %.2f, got %.2f", expected, result)
+		}
+	})
+}
+
 func TestPECommand(t *testing.T) {
 	// 测试PE命令的结构，但不执行网络请求
 	t.Run("CommandStructure", func(t *testing.T) {
