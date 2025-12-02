@@ -3,6 +3,7 @@ package notify
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/spf13/cobra"
 
@@ -80,6 +81,7 @@ func formatPEMessage(treasury, aaa, baa float64) string {
 	baaPE100 := 100 / baa
 
 	return fmt.Sprintf(`📊 *每日 PE 估值报告*
+📅 %s
 
 *收益率数据*
 • 10年期国债: %.2f%%
@@ -103,6 +105,7 @@ func formatPEMessage(treasury, aaa, baa float64) string {
 `+"```"+`
 
 _数据来源: FRED (Federal Reserve Economic Data)_`,
+		time.Now().Format("2006-01-02"),
 		treasury, aaa, baa,
 		treasuryPE100, aaaPE100, baaPE100,
 		50/treasury, 50/aaa, 50/baa,
