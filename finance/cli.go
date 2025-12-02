@@ -233,7 +233,7 @@ func renderThreeColumnPETable(title1 string, yield1 float64, pe1 [5]float64,
 
 	for i := 0; i < 5; i++ {
 		cf := colorFuncs[i]
-		table.Append([]string{
+		_ = table.Append([]string{
 			labels[i],
 			cf(fmt.Sprintf("%.2f", pe1[i])),
 			cf(fmt.Sprintf("%.2f", pe2[i])),
@@ -242,7 +242,7 @@ func renderThreeColumnPETable(title1 string, yield1 float64, pe1 [5]float64,
 	}
 
 	// 添加收益率行
-	table.Append([]string{
+	_ = table.Append([]string{
 		"收益率",
 		fmt.Sprintf("%.2f%%", yield1),
 		fmt.Sprintf("%.2f%%", yield2),
@@ -250,7 +250,7 @@ func renderThreeColumnPETable(title1 string, yield1 float64, pe1 [5]float64,
 	})
 
 	// 渲染表格
-	table.Render()
+	_ = table.Render()
 }
 
 // NewCommand 为金融模块创建并返回市盈率计算命令。
