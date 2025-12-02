@@ -2,16 +2,35 @@
 package finance
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"os"
 	"strconv"
-	"strings"
 
-	"github.com/PuerkitoBio/goquery"
 	"github.com/olekukonko/tablewriter"
 	"github.com/spf13/cobra"
 )
+
+const (
+	// FRED API 基础 URL
+	fredAPIBaseURL = "https://api.stlouisfed.org/fred/series/observations"
+	// FRED Series IDs
+	seriesDGS10 = "DGS10" // 10年期国债收益率
+	seriesAAA   = "AAA"   // AAA 公司债收益率
+	seriesBAA   = "BAA"   // BAA 公司债收益率
+)
+
+// FredResponse 表示 FRED API 的响应结构
+type FredResponse struct {
+	Observations []FredObservation `json:"observations"`
+}
+
+// FredObservation 表示单个观测数据点
+type FredObservation struct {
+	Date  string `json:"date"`
+	Value string `json:"value"`
+}
 
 // peCmd 表示市盈率计算命令
 var peCmd = &cobra.Command{
@@ -31,19 +50,19 @@ var peCmd = &cobra.Command{
 
 		// 并行获取 10 年期国债收益率
 		go func() {
-			value, err := get10YearTreasuryYield()
+			value, err := Get10YearTreasuryYield()
 			treasuryCh <- result{value: value, err: err}
 		}()
 
 		// 并行获取 AAA 公司债券收益率
 		go func() {
-			value, err := getAAACompanyYield()
+			value, err := GetAAACompanyYield()
 			aaaCh <- result{value: value, err: err}
 		}()
 
 		// 并行获取 BBB 公司债券收益率
 		go func() {
-			value, err := getBBBYield()
+			value, err := GetBAAYield()
 			bbbCh <- result{value: value, err: err}
 		}()
 
@@ -104,33 +123,41 @@ type HTTPClient interface {
 // 默认HTTP客户端
 var defaultHTTPClient HTTPClient = &http.Client{}
 
-// get10YearTreasuryYield 从 macromicro.me 获取当前10年期国债收益率。
+// Get10YearTreasuryYield 从 FRED API 获取当前10年期国债收益率。
 // 它返回收益率值作为 float64 以及在此过程中遇到的任何错误。
-func get10YearTreasuryYield() (float64, error) {
-	return getTreasuryYield("https://sc.macromicro.me/series/354/10year-bond-yield", "#panel > main > div.mm-chart-collection > div.mm-cc-hd > div > div.mm-cc-chart-stats-title.pb-2.d-flex.flex-wrap.align-items-baseline > div.stat-val > span.val")
+func Get10YearTreasuryYield() (float64, error) {
+	return GetFredYield(seriesDGS10)
 }
 
-// getAAACompanyYield 从 macromicro.me 获取当前AAA公司债券收益率。
+// GetAAACompanyYield 从 FRED API 获取当前AAA公司债券收益率。
 // 它返回收益率值作为 float64 以及在此过程中遇到的任何错误。
-func getAAACompanyYield() (float64, error) {
-	return getTreasuryYield("https://sc.macromicro.me/series/618/moodys-aaa", "#panel > main > div > div.mm-cc-hd > div > div.mm-cc-chart-stats-title.pb-2.d-flex.flex-wrap.align-items-baseline > div.stat-val > span.val")
+func GetAAACompanyYield() (float64, error) {
+	return GetFredYield(seriesAAA)
 }
 
-// getBBBYield 从 macromicro.me 获取当前BBB/Baa公司债券收益率。
+// GetBAAYield 从 FRED API 获取当前BAA公司债券收益率。
 // 它返回收益率值作为 float64 以及在此过程中遇到的任何错误。
-func getBBBYield() (float64, error) {
-	return getTreasuryYield("https://sc.macromicro.me/series/619/moodys-baa", "#panel > main > div > div.mm-cc-hd > div > div.mm-cc-chart-stats-title.pb-2.d-flex.flex-wrap.align-items-baseline > div.stat-val > span.val")
+func GetBAAYield() (float64, error) {
+	return GetFredYield(seriesBAA)
 }
 
-// getTreasuryYield 是一个通用函数，用于获取财务收益率数据
-func getTreasuryYield(url, selector string) (float64, error) {
+// GetFredYield 从 FRED API 获取指定 series 的最新收益率数据
+func GetFredYield(seriesID string) (float64, error) {
+	// 获取 API Key
+	apiKey := os.Getenv("FRED_API_KEY")
+	if apiKey == "" {
+		return 0, fmt.Errorf("FRED_API_KEY 环境变量未设置，请访问 https://fred.stlouisfed.org/docs/api/api_key.html 申请")
+	}
+
+	// 构建 API URL
+	url := fmt.Sprintf("%s?series_id=%s&api_key=%s&file_type=json&sort_order=desc&limit=1",
+		fredAPIBaseURL, seriesID, apiKey)
+
 	// 构造请求
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return 0, err
 	}
-	// 模拟 Chrome 浏览器 UA
-	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
 
 	resp, err := defaultHTTPClient.Do(req)
 	if err != nil {
@@ -138,20 +165,29 @@ func getTreasuryYield(url, selector string) (float64, error) {
 	}
 	defer resp.Body.Close()
 
-	// 解析 HTML
-	doc, err := goquery.NewDocumentFromReader(resp.Body)
-	if err != nil {
-		return 0, err
+	if resp.StatusCode != http.StatusOK {
+		return 0, fmt.Errorf("FRED API 请求失败，状态码: %d", resp.StatusCode)
 	}
 
-	// 用 CSS selector 抓取
-	selection := doc.Find(selector).First()
-	text := strings.TrimSpace(selection.Text())
+	// 解析 JSON 响应
+	var fredResp FredResponse
+	if err := json.NewDecoder(resp.Body).Decode(&fredResp); err != nil {
+		return 0, fmt.Errorf("解析 FRED API 响应失败: %w", err)
+	}
 
-	// 转 float
-	val, err := strconv.ParseFloat(text, 64)
+	if len(fredResp.Observations) == 0 {
+		return 0, fmt.Errorf("FRED API 未返回 %s 的数据", seriesID)
+	}
+
+	// 获取最新值并转换为 float64
+	valueStr := fredResp.Observations[0].Value
+	if valueStr == "." {
+		return 0, fmt.Errorf("FRED API 返回的 %s 数据不可用", seriesID)
+	}
+
+	val, err := strconv.ParseFloat(valueStr, 64)
 	if err != nil {
-		return 0, err
+		return 0, fmt.Errorf("解析收益率值失败: %w", err)
 	}
 
 	return val, nil
