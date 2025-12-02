@@ -8,7 +8,10 @@ import (
 	"os"
 	"strconv"
 
+	"github.com/fatih/color"
 	"github.com/olekukonko/tablewriter"
+	"github.com/olekukonko/tablewriter/renderer"
+	"github.com/olekukonko/tablewriter/tw"
 	"github.com/spf13/cobra"
 )
 
@@ -197,54 +200,53 @@ func GetFredYield(seriesID string) (float64, error) {
 func renderThreeColumnPETable(title1 string, yield1 float64, pe1 [5]float64,
 	title2 string, yield2 float64, pe2 [5]float64,
 	title3 string, yield3 float64, pe3 [5]float64) {
+
+	// 定义颜色函数
+	greenBold := color.New(color.FgGreen, color.Bold).SprintFunc()
+	yellowBold := color.New(color.FgYellow, color.Bold).SprintFunc()
+	blueBold := color.New(color.FgBlue, color.Bold).SprintFunc()
+	redBold := color.New(color.FgRed, color.Bold).SprintFunc()
+
+	colorFuncs := []func(a ...interface{}) string{greenBold, yellowBold, blueBold, redBold, redBold}
+
+	// 配置 Colorized 渲染器
+	cfg := renderer.ColorizedConfig{
+		Borders: tw.Border{Left: tw.On, Right: tw.On, Top: tw.On, Bottom: tw.On},
+		Settings: tw.Settings{
+			Separators: tw.Separators{BetweenColumns: tw.On, ShowHeader: tw.On},
+			Lines:      tw.Lines{ShowTop: tw.On, ShowBottom: tw.On, ShowHeaderLine: tw.On},
+		},
+		Symbols: tw.NewSymbols(tw.StyleLight),
+	}
+
 	// 创建表格
-	table := tablewriter.NewWriter(os.Stdout)
+	table := tablewriter.NewTable(os.Stdout,
+		tablewriter.WithRenderer(renderer.NewColorized(cfg)),
+		tablewriter.WithHeaderAlignment(tw.AlignCenter),
+	)
 
-	// 设置表头（四列：标签、国债、AAA、BBB）
-	table.SetHeader([]string{"", fmt.Sprintf("📊 %s", title1), fmt.Sprintf("📊 %s", title2), fmt.Sprintf("📊 %s", title3)})
-	table.SetBorder(true)
-	table.SetColumnAlignment([]int{
-		tablewriter.ALIGN_LEFT,
-		tablewriter.ALIGN_RIGHT,
-		tablewriter.ALIGN_RIGHT,
-		tablewriter.ALIGN_RIGHT,
-	})
-	table.SetHeaderAlignment(tablewriter.ALIGN_CENTER)
-	table.SetCenterSeparator("│")
-	table.SetColumnSeparator("│")
-	table.SetRowSeparator("─")
-	table.SetAutoWrapText(false)
+	// 设置表头
+	table.Header([]string{"", fmt.Sprintf("📊 %s", title1), fmt.Sprintf("📊 %s", title2), fmt.Sprintf("📊 %s", title3)})
 
-	// 定义颜色样式
-	lowPEColor := tablewriter.Colors{tablewriter.FgGreenColor, tablewriter.Bold}
-	midPEColor := tablewriter.Colors{tablewriter.FgYellowColor, tablewriter.Bold}
-	basePEColor := tablewriter.Colors{tablewriter.FgBlueColor, tablewriter.Bold}
-	highPEColor := tablewriter.Colors{tablewriter.FgRedColor, tablewriter.Bold}
-	veryHighPEColor := tablewriter.Colors{tablewriter.FgRedColor, tablewriter.Bold}
-
-	// 添加数据行（四列：标签、国债值、AAA值、BBB值）
+	// 添加数据行（手动着色值）
 	labels := []string{"50% PE:", "75% PE:", "100% PE:", "125% PE:", "150% PE:"}
-	colors := []tablewriter.Colors{lowPEColor, midPEColor, basePEColor, highPEColor, veryHighPEColor}
 
 	for i := 0; i < 5; i++ {
-		table.Rich([]string{
+		cf := colorFuncs[i]
+		table.Append([]string{
 			labels[i],
-			fmt.Sprintf("%.2f", pe1[i]),
-			fmt.Sprintf("%.2f", pe2[i]),
-			fmt.Sprintf("%.2f", pe3[i]),
-		}, []tablewriter.Colors{
-			{}, colors[i], colors[i], colors[i],
+			cf(fmt.Sprintf("%.2f", pe1[i])),
+			cf(fmt.Sprintf("%.2f", pe2[i])),
+			cf(fmt.Sprintf("%.2f", pe3[i])),
 		})
 	}
 
 	// 添加收益率行
-	table.Rich([]string{
+	table.Append([]string{
 		"收益率",
 		fmt.Sprintf("%.2f%%", yield1),
 		fmt.Sprintf("%.2f%%", yield2),
 		fmt.Sprintf("%.2f%%", yield3),
-	}, []tablewriter.Colors{
-		{}, {}, {}, {},
 	})
 
 	// 渲染表格
