@@ -5,6 +5,7 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"os"
 	"strings"
 	"testing"
 )
@@ -20,13 +21,17 @@ func (m *MockHTTPClient) Do(req *http.Request) (*http.Response, error) {
 
 func TestGet10YearTreasuryYield(t *testing.T) {
 	t.Run("ValidResponse", func(t *testing.T) {
-		// 保存原始客户端
+		// 保存原始客户端和环境变量
 		originalClient := defaultHTTPClient
+		originalAPIKey := os.Getenv("FRED_API_KEY")
 
-		// 创建模拟响应
+		// 设置测试环境变量
+		os.Setenv("FRED_API_KEY", "test_api_key")
+
+		// 创建模拟 JSON 响应
 		mockResponse := &http.Response{
 			StatusCode: 200,
-			Body:       io.NopCloser(strings.NewReader(`<html><body><div id="panel"><main><div class="mm-chart-collection"><div class="mm-cc-hd"><div><div class="mm-cc-chart-stats-title pb-2 d-flex flex-wrap align-items-baseline"><div class="stat-val"><span class="val">3.50</span></div></div></div></div></main></div></body></html>`)),
+			Body:       io.NopCloser(strings.NewReader(`{"observations":[{"date":"2024-01-01","value":"3.50"}]}`)),
 		}
 
 		// 替换HTTP客户端
@@ -36,12 +41,17 @@ func TestGet10YearTreasuryYield(t *testing.T) {
 			},
 		}
 
-		// 恢复原始客户端
+		// 恢复原始客户端和环境变量
 		defer func() {
 			defaultHTTPClient = originalClient
+			if originalAPIKey == "" {
+				os.Unsetenv("FRED_API_KEY")
+			} else {
+				os.Setenv("FRED_API_KEY", originalAPIKey)
+			}
 		}()
 
-		result, err := get10YearTreasuryYield()
+		result, err := Get10YearTreasuryYield()
 		if err != nil {
 			t.Errorf("expected no error, got: %v", err)
 		}
@@ -53,8 +63,12 @@ func TestGet10YearTreasuryYield(t *testing.T) {
 	})
 
 	t.Run("InvalidResponse", func(t *testing.T) {
-		// 保存原始客户端
+		// 保存原始客户端和环境变量
 		originalClient := defaultHTTPClient
+		originalAPIKey := os.Getenv("FRED_API_KEY")
+
+		// 设置测试环境变量
+		os.Setenv("FRED_API_KEY", "test_api_key")
 
 		// 创建错误响应
 		defaultHTTPClient = &MockHTTPClient{
@@ -63,25 +77,34 @@ func TestGet10YearTreasuryYield(t *testing.T) {
 			},
 		}
 
-		// 恢复原始客户端
+		// 恢复原始客户端和环境变量
 		defer func() {
 			defaultHTTPClient = originalClient
+			if originalAPIKey == "" {
+				os.Unsetenv("FRED_API_KEY")
+			} else {
+				os.Setenv("FRED_API_KEY", originalAPIKey)
+			}
 		}()
 
-		_, err := get10YearTreasuryYield()
+		_, err := Get10YearTreasuryYield()
 		if err == nil {
 			t.Error("expected error, got nil")
 		}
 	})
 
-	t.Run("InvalidHTML", func(t *testing.T) {
-		// 保存原始客户端
+	t.Run("EmptyObservations", func(t *testing.T) {
+		// 保存原始客户端和环境变量
 		originalClient := defaultHTTPClient
+		originalAPIKey := os.Getenv("FRED_API_KEY")
 
-		// 创建包含无效数据的响应
+		// 设置测试环境变量
+		os.Setenv("FRED_API_KEY", "test_api_key")
+
+		// 创建空观测数据的响应
 		mockResponse := &http.Response{
 			StatusCode: 200,
-			Body:       io.NopCloser(strings.NewReader(`<html><body>Invalid HTML</body></html>`)),
+			Body:       io.NopCloser(strings.NewReader(`{"observations":[]}`)),
 		}
 
 		defaultHTTPClient = &MockHTTPClient{
@@ -90,25 +113,34 @@ func TestGet10YearTreasuryYield(t *testing.T) {
 			},
 		}
 
-		// 恢复原始客户端
+		// 恢复原始客户端和环境变量
 		defer func() {
 			defaultHTTPClient = originalClient
+			if originalAPIKey == "" {
+				os.Unsetenv("FRED_API_KEY")
+			} else {
+				os.Setenv("FRED_API_KEY", originalAPIKey)
+			}
 		}()
 
-		_, err := get10YearTreasuryYield()
+		_, err := Get10YearTreasuryYield()
 		if err == nil {
-			t.Error("expected error for invalid HTML, got nil")
+			t.Error("expected error for empty observations, got nil")
 		}
 	})
 
 	t.Run("InvalidNumber", func(t *testing.T) {
-		// 保存原始客户端
+		// 保存原始客户端和环境变量
 		originalClient := defaultHTTPClient
+		originalAPIKey := os.Getenv("FRED_API_KEY")
+
+		// 设置测试环境变量
+		os.Setenv("FRED_API_KEY", "test_api_key")
 
 		// 创建包含非数字文本的响应
 		mockResponse := &http.Response{
 			StatusCode: 200,
-			Body:       io.NopCloser(strings.NewReader(`<html><body><div id="panel"><main><div class="mm-chart-collection"><div class="mm-cc-hd"><div><div class="mm-cc-chart-stats-title pb-2 d-flex flex-wrap align-items-baseline"><div class="stat-val"><span class="val">not_a_number</span></div></div></div></div></main></div></body></html>`)),
+			Body:       io.NopCloser(strings.NewReader(`{"observations":[{"date":"2024-01-01","value":"not_a_number"}]}`)),
 		}
 
 		defaultHTTPClient = &MockHTTPClient{
@@ -117,27 +149,56 @@ func TestGet10YearTreasuryYield(t *testing.T) {
 			},
 		}
 
-		// 恢复原始客户端
+		// 恢复原始客户端和环境变量
 		defer func() {
 			defaultHTTPClient = originalClient
+			if originalAPIKey == "" {
+				os.Unsetenv("FRED_API_KEY")
+			} else {
+				os.Setenv("FRED_API_KEY", originalAPIKey)
+			}
 		}()
 
-		_, err := get10YearTreasuryYield()
+		_, err := Get10YearTreasuryYield()
 		if err == nil {
 			t.Error("expected error for invalid number, got nil")
+		}
+	})
+
+	t.Run("MissingAPIKey", func(t *testing.T) {
+		// 保存原始环境变量
+		originalAPIKey := os.Getenv("FRED_API_KEY")
+
+		// 清除 API Key
+		os.Unsetenv("FRED_API_KEY")
+
+		// 恢复环境变量
+		defer func() {
+			if originalAPIKey != "" {
+				os.Setenv("FRED_API_KEY", originalAPIKey)
+			}
+		}()
+
+		_, err := Get10YearTreasuryYield()
+		if err == nil {
+			t.Error("expected error for missing API key, got nil")
 		}
 	})
 }
 
 func TestGetAAACompanyYield(t *testing.T) {
 	t.Run("ValidResponse", func(t *testing.T) {
-		// 保存原始客户端
+		// 保存原始客户端和环境变量
 		originalClient := defaultHTTPClient
+		originalAPIKey := os.Getenv("FRED_API_KEY")
 
-		// 创建模拟响应
+		// 设置测试环境变量
+		os.Setenv("FRED_API_KEY", "test_api_key")
+
+		// 创建模拟 JSON 响应
 		mockResponse := &http.Response{
 			StatusCode: 200,
-			Body:       io.NopCloser(strings.NewReader(`<html><body><div id="panel"><main><div><div class="mm-cc-hd"><div><div class="mm-cc-chart-stats-title pb-2 d-flex flex-wrap align-items-baseline"><div class="stat-val"><span class="val">4.25</span></div></div></div></div></main></div></body></html>`)),
+			Body:       io.NopCloser(strings.NewReader(`{"observations":[{"date":"2024-01-01","value":"4.25"}]}`)),
 		}
 
 		// 替换HTTP客户端
@@ -147,12 +208,17 @@ func TestGetAAACompanyYield(t *testing.T) {
 			},
 		}
 
-		// 恢复原始客户端
+		// 恢复原始客户端和环境变量
 		defer func() {
 			defaultHTTPClient = originalClient
+			if originalAPIKey == "" {
+				os.Unsetenv("FRED_API_KEY")
+			} else {
+				os.Setenv("FRED_API_KEY", originalAPIKey)
+			}
 		}()
 
-		result, err := getAAACompanyYield()
+		result, err := GetAAACompanyYield()
 		if err != nil {
 			t.Errorf("expected no error, got: %v", err)
 		}
@@ -164,15 +230,19 @@ func TestGetAAACompanyYield(t *testing.T) {
 	})
 }
 
-func TestGetBBBYield(t *testing.T) {
+func TestGetBAAYield(t *testing.T) {
 	t.Run("ValidResponse", func(t *testing.T) {
-		// 保存原始客户端
+		// 保存原始客户端和环境变量
 		originalClient := defaultHTTPClient
+		originalAPIKey := os.Getenv("FRED_API_KEY")
 
-		// 创建模拟响应
+		// 设置测试环境变量
+		os.Setenv("FRED_API_KEY", "test_api_key")
+
+		// 创建模拟 JSON 响应
 		mockResponse := &http.Response{
 			StatusCode: 200,
-			Body:       io.NopCloser(strings.NewReader(`<html><body><div id="panel"><main><div><div class="mm-cc-hd"><div><div class="mm-cc-chart-stats-title pb-2 d-flex flex-wrap align-items-baseline"><div class="stat-val"><span class="val">5.50</span></div></div></div></div></main></div></body></html>`)),
+			Body:       io.NopCloser(strings.NewReader(`{"observations":[{"date":"2024-01-01","value":"5.50"}]}`)),
 		}
 
 		// 替换HTTP客户端
@@ -182,12 +252,17 @@ func TestGetBBBYield(t *testing.T) {
 			},
 		}
 
-		// 恢复原始客户端
+		// 恢复原始客户端和环境变量
 		defer func() {
 			defaultHTTPClient = originalClient
+			if originalAPIKey == "" {
+				os.Unsetenv("FRED_API_KEY")
+			} else {
+				os.Setenv("FRED_API_KEY", originalAPIKey)
+			}
 		}()
 
-		result, err := getBBBYield()
+		result, err := GetBAAYield()
 		if err != nil {
 			t.Errorf("expected no error, got: %v", err)
 		}
