@@ -1,5 +1,8 @@
 name: Daily Push
 
+permissions:
+  contents: read
+
 on:
   schedule:
     # UTC 08:00 = 北京时间 16:00
