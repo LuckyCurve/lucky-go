@@ -4,7 +4,7 @@ This file provides guidance to CodeBuddy Code when working with code in this rep
 
 ## Project Overview
 
-lucky-go 是一个基于 Cobra 框架的 Go CLI 工具，提供五大功能模块：云服务管理、SSH连接、金融数据分析、Telegram通知推送和游戏自动化。
+lucky-go 是一个基于 Cobra 框架的 Go CLI 工具，提供六大功能模块：云服务管理、SSH连接、金融数据分析、Telegram通知推送、汇率查询和游戏自动化。
 
 ## Development Commands
 
@@ -24,6 +24,11 @@ go test -v -race ./...
 # 运行特定模块测试
 go test -v ./finance/...
 go test -v ./notify/...
+go test -v ./forex/...
+
+# 生成测试覆盖率报告
+go test -coverprofile=coverage.out ./...
+go tool cover -html=coverage.out -o coverage.html
 
 # 代码质量检查
 golangci-lint run
@@ -41,6 +46,7 @@ rootCmd.AddCommand(ssh.NewCommand())
 rootCmd.AddCommand(cloud.NewCommand())
 rootCmd.AddCommand(finance.NewCommand())
 rootCmd.AddCommand(notify.NewCommand())
+rootCmd.AddCommand(forex.NewCommand())
 rootCmd.AddCommand(game.NewCommand())
 ```
 
@@ -51,6 +57,7 @@ rootCmd.AddCommand(game.NewCommand())
 ├── cloud/            # 腾讯云Lighthouse实例管理
 ├── finance/          # FRED API 金融数据获取和PE计算
 ├── notify/           # Telegram消息推送（依赖finance模块）
+├── forex/            # 汇率查询（Frankfurter API，依赖notify）
 ├── game/             # Android ADB游戏自动化
 └── server/ssh/       # SSH连接管理
 ```
@@ -58,6 +65,7 @@ rootCmd.AddCommand(game.NewCommand())
 ### Module Dependencies
 
 ```
+forex  ──→ notify ──→ Telegram API
 notify ──→ finance ──→ FRED API
 cloud  ──→ config  ──→ ~/.lucky-go/config.yaml
 ssh    ──→ config
@@ -72,6 +80,7 @@ game   ──→ (独立，仅依赖ADB)
 // 生产代码
 var execCommand = exec.Command
 var rebootInstanceFunc = defaultRebootInstance
+var defaultHTTPClient HTTPClient = &http.Client{}
 
 // 测试中替换
 execCommand = fakeExecCommand
@@ -122,10 +131,24 @@ go func() {
 
 ```
 lucky-go
-├── cloud reboot [dest]     # 重启腾讯云实例
-├── pe                      # 显示PE估值表格
-├── push                    # 推送PE数据到Telegram
-├── ssh [dest]              # SSH连接服务器
-│   └── serve --port PORT   # 启动HTTP服务
-└── game                    # 启动游戏自动点击
+├── cloud reboot [dest]           # 重启腾讯云实例
+├── pe                            # 显示PE估值表格
+├── push                          # 推送PE数据到Telegram
+├── forex [from] [to]             # 查询汇率（如 forex USD CNY）
+│   └── --amount, -a              # 兑换金额
+│   └── --push, -p                # 推送结果到Telegram
+├── ssh [dest]                    # SSH连接服务器
+│   └── serve --port PORT         # 启动HTTP服务
+└── game                          # 启动游戏自动点击
 ```
+
+## Dependencies
+
+- **Cobra**: CLI框架
+- **TencentCloud SDK**: 云服务API
+- **tablewriter + fatih/color**: 终端表格渲染和彩色输出
+- **yaml.v3**: 配置文件处理
+
+## CI/CD
+
+项目使用 GitHub Actions，支持多平台（Ubuntu/Windows/macOS）和多Go版本（1.21-1.25）测试。
