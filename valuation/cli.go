@@ -164,7 +164,7 @@ func formatCAPETelegramMessage(cape, fairPE, treasury, premium float64) string {
 
 *评级: %s*
 
-_数据来源: Multpl.com, FRED_`,
+_数据来源: Multpl, FRED_`,
 		cape, fairPE, premium, treasury, rating)
 }
 
