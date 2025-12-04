@@ -19,7 +19,8 @@ func TestCAPECommand(t *testing.T) {
 		// 验证 push flag 存在
 		pushFlag := cmd.Flags().Lookup("push")
 		if pushFlag == nil {
-			t.Error("expected push flag to exist")
+			t.Fatal("expected push flag to exist")
+			return
 		}
 		if pushFlag.Shorthand != "p" {
 			t.Errorf("expected push shorthand 'p', got '%s'", pushFlag.Shorthand)
