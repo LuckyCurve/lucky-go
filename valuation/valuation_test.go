@@ -1,6 +1,7 @@
 package valuation
 
 import (
+	"fmt"
 	"io"
 	"net/http"
 	"strings"
@@ -46,6 +47,75 @@ func TestGetShillerCAPE(t *testing.T) {
 		expected := 40.45
 		if result != expected {
 			t.Errorf("expected %.2f, got %.2f", expected, result)
+		}
+	})
+}
+
+func TestGetShillerCAPE_Errors(t *testing.T) {
+	t.Run("NetworkError", func(t *testing.T) {
+		originalClient := defaultHTTPClient
+
+		defaultHTTPClient = &MockHTTPClient{
+			DoFunc: func(req *http.Request) (*http.Response, error) {
+				return nil, fmt.Errorf("network error")
+			},
+		}
+
+		defer func() {
+			defaultHTTPClient = originalClient
+		}()
+
+		_, err := GetShillerCAPE()
+		if err == nil {
+			t.Error("expected error, got nil")
+		}
+	})
+
+	t.Run("InvalidHTML", func(t *testing.T) {
+		originalClient := defaultHTTPClient
+
+		mockResponse := &http.Response{
+			StatusCode: 200,
+			Body:       io.NopCloser(strings.NewReader(`<html>no data here</html>`)),
+		}
+
+		defaultHTTPClient = &MockHTTPClient{
+			DoFunc: func(req *http.Request) (*http.Response, error) {
+				return mockResponse, nil
+			},
+		}
+
+		defer func() {
+			defaultHTTPClient = originalClient
+		}()
+
+		_, err := GetShillerCAPE()
+		if err == nil {
+			t.Error("expected error for invalid HTML, got nil")
+		}
+	})
+
+	t.Run("Non200Status", func(t *testing.T) {
+		originalClient := defaultHTTPClient
+
+		mockResponse := &http.Response{
+			StatusCode: 500,
+			Body:       io.NopCloser(strings.NewReader("")),
+		}
+
+		defaultHTTPClient = &MockHTTPClient{
+			DoFunc: func(req *http.Request) (*http.Response, error) {
+				return mockResponse, nil
+			},
+		}
+
+		defer func() {
+			defaultHTTPClient = originalClient
+		}()
+
+		_, err := GetShillerCAPE()
+		if err == nil {
+			t.Error("expected error for non-200 status, got nil")
 		}
 	})
 }
