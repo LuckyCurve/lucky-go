@@ -59,6 +59,7 @@ func TestLoadDestinationInstance(t *testing.T) {
 		}
 		if instance == nil {
 			t.Fatal("expected instance, got nil")
+			return
 		}
 		if instance.Ssh != "test@example.com" {
 			t.Errorf("expected SSH to be 'test@example.com', got '%s'", instance.Ssh)
