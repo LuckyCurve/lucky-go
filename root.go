@@ -7,6 +7,7 @@ import (
 	"lucky-go/game"
 	"lucky-go/notify"
 	"lucky-go/server/ssh"
+	"lucky-go/valuation"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -48,4 +49,5 @@ func init() {
 	rootCmd.AddCommand(finance.NewCommand())
 	rootCmd.AddCommand(notify.NewCommand())
 	rootCmd.AddCommand(forex.NewCommand())
+	rootCmd.AddCommand(valuation.NewCommand())
 }
