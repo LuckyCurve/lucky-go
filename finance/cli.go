@@ -273,44 +273,38 @@ func renderThreeColumnPETable(title1 string, yield1 float64, pe1 [5]float64,
 
 // formatPEMessage 格式化 PE 数据为 Telegram 消息
 func formatPEMessage(treasury, aaa, baa float64) string {
-	// 计算各档位 PE
-	treasuryPE100 := 100 / treasury
-	aaaPE100 := 100 / aaa
-	baaPE100 := 100 / baa
-
 	return fmt.Sprintf(`📊 *每日 PE 估值报告*
 📅 %s
 
-*收益率数据*
-• 10年期国债: %.2f%%
-• AAA 公司债: %.2f%%
-• BAA 公司债: %.2f%%
+*国债基准 (%.2f%%)*
+1️⃣ 50%% PE: %.2f
+2️⃣ 75%% PE: %.2f
+3️⃣ 100%% PE: %.2f
+4️⃣ 125%% PE: %.2f
+5️⃣ 150%% PE: %.2f
 
-*100%% PE 估值*
-• 国债基准: %.2f
-• AAA 基准: %.2f
-• BAA 基准: %.2f
+*AAA 基准 (%.2f%%)*
+1️⃣ 50%% PE: %.2f
+2️⃣ 75%% PE: %.2f
+3️⃣ 100%% PE: %.2f
+4️⃣ 125%% PE: %.2f
+5️⃣ 150%% PE: %.2f
 
-*PE 区间参考*
-`+"`"+"`"+"`"+`
-档位     国债     AAA     BAA
-───────────────────────────────
-50%%    %6.2f  %6.2f  %6.2f
-75%%    %6.2f  %6.2f  %6.2f
-100%%   %6.2f  %6.2f  %6.2f
-125%%   %6.2f  %6.2f  %6.2f
-150%%   %6.2f  %6.2f  %6.2f
-`+"`"+"`"+"`"+`
+*BAA 基准 (%.2f%%)*
+1️⃣ 50%% PE: %.2f
+2️⃣ 75%% PE: %.2f
+3️⃣ 100%% PE: %.2f
+4️⃣ 125%% PE: %.2f
+5️⃣ 150%% PE: %.2f
 
-_数据来源: FRED (Federal Reserve Economic Data)_`,
+_数据来源: FRED_`,
 		time.Now().Format("2006-01-02"),
-		treasury, aaa, baa,
-		treasuryPE100, aaaPE100, baaPE100,
-		50/treasury, 50/aaa, 50/baa,
-		75/treasury, 75/aaa, 75/baa,
-		100/treasury, 100/aaa, 100/baa,
-		125/treasury, 125/aaa, 125/baa,
-		150/treasury, 150/aaa, 150/baa,
+		treasury,
+		50/treasury, 75/treasury, 100/treasury, 125/treasury, 150/treasury,
+		aaa,
+		50/aaa, 75/aaa, 100/aaa, 125/aaa, 150/aaa,
+		baa,
+		50/baa, 75/baa, 100/baa, 125/baa, 150/baa,
 	)
 }
 

@@ -103,26 +103,24 @@ func renderForexTable(result *ExchangeResult) {
 	_ = table.Render()
 }
 
-// formatTelegramMessage 格式化 Telegram 消息（使用纯英文标签和表格边框保持等宽对齐）
+// formatTelegramMessage 格式化 Telegram 消息
 func formatTelegramMessage(result *ExchangeResult) string {
-	// 预先格式化 Amount 行内容
-	amountStr := fmt.Sprintf("%.2f %s = %.2f %s", result.Amount, result.From, result.Converted, result.To)
+	return fmt.Sprintf(`💱 *汇率查询*
 
-	return fmt.Sprintf(`💱 *Exchange Rate*
-`+"```"+`
-+--------+------------------------+
-| From   | %-22s |
-| To     | %-22s |
-| Rate   | %-22.4f |
-| Amount | %-22s |
-| Date   | %-22s |
-+--------+------------------------+
-`+"```"+`
-_Source: Frankfurter API_`,
+*兑换信息*
+• 源货币: %s
+• 目标货币: %s
+• 汇率: %.4f
+• 金额: %.2f %s = %.2f %s
+
+*更新时间*
+• %s
+
+_数据来源: Frankfurter API_`,
 		result.From,
 		result.To,
 		result.Rate,
-		amountStr,
+		result.Amount, result.From, result.Converted, result.To,
 		result.UpdateDate,
 	)
 }
