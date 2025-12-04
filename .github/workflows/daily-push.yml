@@ -5,8 +5,10 @@ permissions:
 
 on:
   schedule:
-    # UTC 08:00 = 北京时间 16:00
-    - cron: '0 8 * * *'
+    # UTC 01:47 = 北京时间 09:47
+    - cron: '47 1 * * *'
+    # UTC 07:47 = 北京时间 15:47
+    - cron: '47 7 * * *'
   workflow_dispatch:
     # 支持手动触发
 
