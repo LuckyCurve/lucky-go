@@ -5,7 +5,6 @@ import (
 	"lucky-go/finance"
 	"lucky-go/forex"
 	"lucky-go/game"
-	"lucky-go/notify"
 	"lucky-go/server/ssh"
 	"lucky-go/valuation"
 	"os"
@@ -47,7 +46,6 @@ func init() {
 	rootCmd.AddCommand(cloud.NewCommand())
 	rootCmd.AddCommand(game.NewCommand())
 	rootCmd.AddCommand(finance.NewCommand())
-	rootCmd.AddCommand(notify.NewCommand())
 	rootCmd.AddCommand(forex.NewCommand())
 	rootCmd.AddCommand(valuation.NewCommand())
 }

@@ -7,13 +7,22 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"time"
 
 	"github.com/fatih/color"
 	"github.com/olekukonko/tablewriter"
 	"github.com/olekukonko/tablewriter/renderer"
 	"github.com/olekukonko/tablewriter/tw"
 	"github.com/spf13/cobra"
+
+	"lucky-go/notify"
 )
+
+var push bool
+
+func init() {
+	peCmd.Flags().BoolVarP(&push, "push", "p", false, "推送结果到 Telegram")
+}
 
 const (
 	// FRED API 基础 URL
@@ -113,6 +122,15 @@ var peCmd = &cobra.Command{
 			"AAA债券收益率", aaaResult.value, aaaPEs,
 			"BAA债券收益率", bbbResult.value, bbbPEs,
 		)
+
+		// 如果需要推送到 Telegram
+		if push {
+			message := formatPEMessage(treasuryResult.value, aaaResult.value, bbbResult.value)
+			if err := notify.SendTelegramMessage(message); err != nil {
+				return fmt.Errorf("推送到 Telegram 失败: %w", err)
+			}
+			fmt.Println("\n成功推送 PE 数据到 Telegram")
+		}
 
 		return nil
 	},
@@ -251,6 +269,49 @@ func renderThreeColumnPETable(title1 string, yield1 float64, pe1 [5]float64,
 
 	// 渲染表格
 	_ = table.Render()
+}
+
+// formatPEMessage 格式化 PE 数据为 Telegram 消息
+func formatPEMessage(treasury, aaa, baa float64) string {
+	// 计算各档位 PE
+	treasuryPE100 := 100 / treasury
+	aaaPE100 := 100 / aaa
+	baaPE100 := 100 / baa
+
+	return fmt.Sprintf(`📊 *每日 PE 估值报告*
+📅 %s
+
+*收益率数据*
+• 10年期国债: %.2f%%
+• AAA 公司债: %.2f%%
+• BAA 公司债: %.2f%%
+
+*100%% PE 估值*
+• 国债基准: %.2f
+• AAA 基准: %.2f
+• BAA 基准: %.2f
+
+*PE 区间参考*
+`+"`"+"`"+"`"+`
+档位     国债     AAA     BAA
+───────────────────────────────
+50%%    %6.2f  %6.2f  %6.2f
+75%%    %6.2f  %6.2f  %6.2f
+100%%   %6.2f  %6.2f  %6.2f
+125%%   %6.2f  %6.2f  %6.2f
+150%%   %6.2f  %6.2f  %6.2f
+`+"`"+"`"+"`"+`
+
+_数据来源: FRED (Federal Reserve Economic Data)_`,
+		time.Now().Format("2006-01-02"),
+		treasury, aaa, baa,
+		treasuryPE100, aaaPE100, baaPE100,
+		50/treasury, 50/aaa, 50/baa,
+		75/treasury, 75/aaa, 75/baa,
+		100/treasury, 100/aaa, 100/baa,
+		125/treasury, 125/aaa, 125/baa,
+		150/treasury, 150/aaa, 150/baa,
+	)
 }
 
 // NewCommand 为金融模块创建并返回市盈率计算命令。

@@ -275,7 +275,6 @@ func TestGetBAAYield(t *testing.T) {
 }
 
 func TestPECommand(t *testing.T) {
-	// 测试PE命令的结构，但不执行网络请求
 	t.Run("CommandStructure", func(t *testing.T) {
 		cmd := NewCommand()
 
@@ -285,6 +284,16 @@ func TestPECommand(t *testing.T) {
 
 		if cmd.Short != "基于国债和AAA公司收益率计算金融市盈率" {
 			t.Errorf("expected different short description, got '%s'", cmd.Short)
+		}
+
+		// 验证 --push 标志存在
+		pushFlag := cmd.Flags().Lookup("push")
+		if pushFlag == nil {
+			t.Fatal("expected --push flag to exist")
+			return
+		}
+		if pushFlag.Shorthand != "p" {
+			t.Errorf("expected shorthand 'p', got '%s'", pushFlag.Shorthand)
 		}
 	})
 }

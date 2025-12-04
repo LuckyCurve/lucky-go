@@ -45,7 +45,6 @@ golangci-lint run
 rootCmd.AddCommand(ssh.NewCommand())
 rootCmd.AddCommand(cloud.NewCommand())
 rootCmd.AddCommand(finance.NewCommand())
-rootCmd.AddCommand(notify.NewCommand())
 rootCmd.AddCommand(forex.NewCommand())
 rootCmd.AddCommand(game.NewCommand())
 ```
@@ -55,8 +54,8 @@ rootCmd.AddCommand(game.NewCommand())
 ```
 ├── config/           # 配置管理 - 处理 ~/.lucky-go/config.yaml
 ├── cloud/            # 腾讯云Lighthouse实例管理
-├── finance/          # FRED API 金融数据获取和PE计算
-├── notify/           # Telegram消息推送（依赖finance模块）
+├── finance/          # FRED API 金融数据获取和PE计算，支持Telegram推送
+├── notify/           # Telegram消息推送底层实现
 ├── forex/            # 汇率查询（Frankfurter API，依赖notify）
 ├── valuation/        # 标普500 CAPE 估值（Multpl.com 数据）
 ├── game/             # Android ADB游戏自动化
@@ -67,7 +66,7 @@ rootCmd.AddCommand(game.NewCommand())
 
 ```
 forex     ──→ notify ──→ Telegram API
-notify    ──→ finance ──→ FRED API
+finance   ──→ notify ──→ Telegram API
 valuation ──→ finance ──→ FRED API
 valuation ──→ notify  ──→ Telegram API
 cloud     ──→ config  ──→ ~/.lucky-go/config.yaml
@@ -136,7 +135,7 @@ go func() {
 lucky-go
 ├── cloud reboot [dest]           # 重启腾讯云实例
 ├── pe                            # 显示PE估值表格
-├── push                          # 推送PE数据到Telegram
+│   └── --push, -p                # 推送结果到Telegram
 ├── cape                          # 查询标普500 CAPE 估值
 │   └── --push, -p                # 推送结果到Telegram
 ├── forex [from] [to]             # 查询汇率（如 forex USD CNY）
