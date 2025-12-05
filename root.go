@@ -2,6 +2,7 @@ package main
 
 import (
 	"lucky-go/cloud"
+	"lucky-go/daily"
 	"lucky-go/finance"
 	"lucky-go/forex"
 	"lucky-go/game"
@@ -48,4 +49,5 @@ func init() {
 	rootCmd.AddCommand(finance.NewCommand())
 	rootCmd.AddCommand(forex.NewCommand())
 	rootCmd.AddCommand(valuation.NewCommand())
+	rootCmd.AddCommand(daily.NewCommand())
 }

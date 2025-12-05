@@ -27,22 +27,9 @@ jobs:
       - name: Build
         run: go build -o lucky-go .
 
-      - name: Push PE data to Telegram
-        run: ./lucky-go pe --push
+      - name: Push daily report to Telegram
+        run: ./lucky-go daily --push
         env:
           FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
-          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-
-      - name: Push CAPE data to Telegram
-        run: ./lucky-go cape --push
-        env:
-          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
-          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-
-      - name: Push Forex data to Telegram
-        run: ./lucky-go forex USD CNY --push
-        env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
