@@ -207,7 +207,8 @@ func formatDailyMessage(r *DailyReport) string {
 
 ━━━━━━━━━━━━━━━━━━━━
 
-_数据来源: FRED, Multpl, Frankfurter_`,
+_数据来源: FRED, Multpl, Frankfurter_
+[SlickCharts](https://www.slickcharts.com/)`,
 		time.Now().Format("2006-01-02"),
 		// PE 数据
 		r.Treasury,
