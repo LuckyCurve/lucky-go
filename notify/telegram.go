@@ -8,7 +8,12 @@ import (
 	"os"
 )
 
-const telegramAPIBaseURL = "https://api.telegram.org/bot"
+var telegramAPIBaseURL = "https://api.telegram.org/bot"
+
+// setTelegramAPIBaseURL 用于测试时替换 API URL
+func setTelegramAPIBaseURL(url string) {
+	telegramAPIBaseURL = url
+}
 
 // TelegramMessage 表示发送到 Telegram 的消息
 type TelegramMessage struct {
