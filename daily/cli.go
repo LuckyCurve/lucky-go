@@ -182,13 +182,13 @@ func formatDailyMessage(r *DailyReport) string {
 📊 *PE 估值*
 
 *国债基准 (%.2f%%)*
-• 50%% PE: %.2f | 100%% PE: %.2f | 150%% PE: %.2f
+• 50%% PE: %.2f | 100%% PE: %.2f | 200%% PE: %.2f
 
 *AAA 基准 (%.2f%%)*
-• 50%% PE: %.2f | 100%% PE: %.2f | 150%% PE: %.2f
+• 50%% PE: %.2f | 100%% PE: %.2f | 200%% PE: %.2f
 
 *BAA 基准 (%.2f%%)*
-• 50%% PE: %.2f | 100%% PE: %.2f | 150%% PE: %.2f
+• 50%% PE: %.2f | 100%% PE: %.2f | 200%% PE: %.2f
 
 ━━━━━━━━━━━━━━━━━━━━
 
@@ -212,11 +212,11 @@ _数据来源: FRED, Multpl, Frankfurter_
 		time.Now().Format("2006-01-02"),
 		// PE 数据
 		r.Treasury,
-		50/r.Treasury, 100/r.Treasury, 150/r.Treasury,
+		50/r.Treasury, 100/r.Treasury, 200/r.Treasury,
 		r.AAA,
-		50/r.AAA, 100/r.AAA, 150/r.AAA,
+		50/r.AAA, 100/r.AAA, 200/r.AAA,
 		r.BAA,
-		50/r.BAA, 100/r.BAA, 150/r.BAA,
+		50/r.BAA, 100/r.BAA, 200/r.BAA,
 		// CAPE 数据
 		r.CAPE, r.FairPE, r.Premium, rating,
 		// Forex 数据
