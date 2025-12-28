@@ -106,7 +106,7 @@ func TestSendTelegramMessage(t *testing.T) {
 
 					// 返回响应
 					w.WriteHeader(tt.serverCode)
-					json.NewEncoder(w).Encode(tt.serverResp)
+					_ = json.NewEncoder(w).Encode(tt.serverResp)
 				}))
 				defer server.Close()
 
@@ -170,7 +170,7 @@ func TestSendTelegramMessage_InvalidJSONResponse(t *testing.T) {
 
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("invalid json"))
+		_, _ = w.Write([]byte("invalid json"))
 	}))
 	defer server.Close()
 
